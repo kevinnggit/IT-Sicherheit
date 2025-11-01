@@ -124,13 +124,20 @@ public class ClientHandler extends Thread{
                 System.out.println("------------------------------------------------");
             } catch (NumberFormatException nfe) {
                 //--------
+                System.out.println("Fehler von " + clientIP + ": " + "Ungültiger <ciphertext>.");
+                out.println("400 Bad Request: Ungültiger <ciphertext> (nicht Hex).");
             } catch (Exception e) {
                 //--------
+                System.out.println("Fehler bei der Entschlüsselung der Nachricht von " + clientIP + ": " + e.getMessage());
+                out.println("500 Internal Server Error: Fehler bei der Entschlüsselung.");
+                e.printStackTrace();
             }
 
             System.out.println("Verbindung zu " + clientIP + " wird geschlossen.");
 
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            System.out.println("Socket-Fehler beim ClientHandler: " + e.getMessage());
+        }
 
 
 
