@@ -71,7 +71,7 @@ public class ETPServer {
                 //Warte auf "OK" Antwort
                 String response = in.readLine();
 
-                if ("ok".equals(response)) {
+                if ("ok".equalsIgnoreCase(response)) {
                     System.out.println("[Announce] Erfolgreich angemeldet.");
                 } else {
                     System.err.println("[Announce] Fehler bei der Anmeldung: " + response);

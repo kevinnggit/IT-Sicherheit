@@ -7,7 +7,7 @@ public class Krypto {
     private BigInteger N;
     private BigInteger e;   // öffentlicher exponent
     private BigInteger d;   //privater exponent
-
+        
     public Krypto (int bitLength) {
         System.out.println("Erzeuge " + bitLength + "-Bit-Schlüsselpaar");
 

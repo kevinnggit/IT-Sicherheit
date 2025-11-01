@@ -55,7 +55,7 @@ public class ClientHandler extends Thread{
                 return;
             }
 
-            if (!resource.equals("Pubkey")) {
+            if (!resource.equals("pubkey")) {
                 System.out.println("Fehler von " + clientIP + ": " + "Unbekannte Ressource '" + resource + "'.");
                 out.println("404 Not Found: Unbekannte Ressource");
                 return;
@@ -96,13 +96,13 @@ public class ClientHandler extends Thread{
                 //Konvertieren der Nachricht zu Byte-Array
                 byte[] messageBytes = message.toByteArray();
 
-                int paddingStartIndex = -1;
-                for (int i = 0; i < messageBytes.length; i++) {
-                    if (messageBytes[i] == 0x00) {
-                        //paddingStartIndex = i;
-                        break;
-                    }
-                }
+                // int paddingStartIndex = -1;
+                // for (int i = 0; i < messageBytes.length; i++) {
+                //     if (messageBytes[i] == 0x00) {
+                //         //paddingStartIndex = i;
+                //         break;
+                //     }
+                // }
 
                 int textLength = messageBytes.length;
 
