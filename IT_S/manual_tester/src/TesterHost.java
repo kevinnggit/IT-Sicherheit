@@ -14,32 +14,23 @@ import java.util.Scanner;
 
 public class TesterHost {
 
-    // Standard-Port, falls kein Argument angegeben wird
     private static final int DEFAULT_ANNOUNCE_PORT = 3033;
     private static final int BLOCK_SIZE_BYTES = 64; 
 
     public static void main(String[] args) {
         
-        //IP und Port aus Argumenten lesen
         String listenIP = "0.0.0.0";
         int listenPort = DEFAULT_ANNOUNCE_PORT;
 
-        if (args.length > 0) {
-            listenIP = args[0];
-            System.out.println("[Info] Verwende Listen-IP: " + listenIP);
-        }
-        if (args.length > 1) {
-            listenPort = Integer.parseInt(args[1]);
-            System.out.println("[Info] Verwende Listen-Port: " + listenPort);
-        }
+        if (args.length > 0) listenIP = args[0];
+        if (args.length > 1) listenPort = Integer.parseInt(args[1]);
         
         Scanner userInput = new Scanner(System.in);
         String etpServerIP = "";
         int etpServerPort = -1;
 
         try {
-            //ROLLE 1: ANKÜNDIGUNGS-SERVER
-            //übergebe die IP und den Port an die Methode
+            // --- ROLLE 1: ANKÜNDIGUNGS-SERVER ---
             Object[] serverInfo = waitForAnnouncement(userInput, listenIP, listenPort);
             
             etpServerIP = (String) serverInfo[0];
@@ -52,53 +43,38 @@ public class TesterHost {
 
             Thread.sleep(1000); 
 
-            //ROLLE 2: INTERAKTIVER ETP-CLIENT
-            //übergebe die (jetzt echte) IP und den Port des Servers
+            // --- ROLLE 2: INTERAKTIVER ETP-CLIENT ---
             interactWithEtpServer(userInput, etpServerIP, etpServerPort);
 
-        } catch (IOException | InterruptedException e) {
-            System.err.println("Ein Fehler ist aufgetreten: " + e.getMessage());
         } catch (Exception e) {
-            System.err.println("Fehler beim Parsen der Server-Infos: " + e.getMessage());
+            System.err.println("Ein globaler Fehler ist aufgetreten: " + e.getMessage());
         } finally {
             userInput.close();
+            System.out.println("Tester wird beendet.");
         }
     }
 
-    /*
-      ROLLE 1: Öffnet den ServerSocket auf der spezifizierten IP und Port.
-      return Ein Object-Array: {String serverIP, int serverPort} oder {null, -1}
-     */
     private static Object[] waitForAnnouncement(Scanner userInput, String listenIP, int listenPort) throws IOException {
         System.out.println("[Rolle 1] Starte Ankündigungs-Server auf " + listenIP + ":" + listenPort + "...");
-        System.out.println(">>> BITTE JETZT DEN ETPSERVER STARTEN (./run.sh) <<<");
-        System.out.println("(Stelle sicher, dass ETPServer.java auf diese IP/Port zeigt)");
+        System.out.println(">>> BITTE JETZT DEINEN ETPSERVER STARTEN (./run.sh) <<<");
 
-        // Erzeuge die IP-Adresse
         InetAddress bindAddr = InetAddress.getByName(listenIP);
         
-        // Binde den ServerSocket an die spezifische IP und Port
         try (
             ServerSocket announceSocket = new ServerSocket(listenPort, 50, bindAddr);
             Socket etpServerSocket = announceSocket.accept();
             BufferedReader in = new BufferedReader(new InputStreamReader(etpServerSocket.getInputStream()));
             PrintWriter out = new PrintWriter(etpServerSocket.getOutputStream(), true)
         ) {
-            // WICHTIG: Erfasse die IP, von der sich der Server meldet
             String serverIP = etpServerSocket.getInetAddress().getHostAddress();
-            
             System.out.println("[Rolle 1] ETPServer von IP " + serverIP + " hat sich verbunden!");
             
-            // Portnummer lesen
             String portStr = in.readLine();
             int port = Integer.parseInt(portStr);
             System.out.println("[Rolle 1] ETPServer lauscht auf Port: " + port);
 
-            // "ok" senden
             out.println("ok");
             System.out.println("[Rolle 1] 'ok' gesendet. Rolle 1 beendet.");
-            
-            // Gebe BEIDE Infos zurück
             return new Object[]{serverIP, port};
             
         } catch (Exception e) {
@@ -107,14 +83,14 @@ public class TesterHost {
         }
     }
 
-    /*
-     ROLLE 2: Verbindet sich mit der ECHTEN IP und Port des ETPServers.
+    /**
+     * ROLLE 2: Verbindet sich mit dem ETPServer und führt
+     * das ETP-Protokoll interaktiv aus.
      */
-    private static void interactWithEtpServer(Scanner userInput, String serverIP, int serverPort) throws IOException {
+    private static void interactWithEtpServer(Scanner userInput, String serverIP, int serverPort) throws IOException, InterruptedException {
         System.out.println("\n--- [Rolle 2] ---");
         System.out.println("Verbinde mit ETPServer auf " + serverIP + ":" + serverPort + "...");
 
-        // Verbinde mit der erfassten IP und dem Port
         try (
             Socket etpSocket = new Socket(serverIP, serverPort);
             PrintWriter out = new PrintWriter(etpSocket.getOutputStream(), true);
@@ -122,32 +98,52 @@ public class TesterHost {
         ) {
             System.out.println("[Rolle 2] Verbunden!");
 
-            //SCHRITT 1: ANFRAGE SENDEN
-            System.out.print("\nWas soll ich senden? (z.B. 'GET pubkey ETP/2025'):\n> ");
-            String request = userInput.nextLine();
-            out.println(request);
+            BigInteger e = null;
+            BigInteger N = null;
 
-            //SCHRITT 2: SCHLÜSSEL EMPFANGEN
-            System.out.println("\nWarte auf Schlüssel vom Server...");
-            String pubLine = in.readLine();
-            String nLine = in.readLine();
+            // --- SCHRITT 1 & 2: SCHLÜSSEL ABFRAGEN (MIT WIEDERHOLUNGSSCHLEIFE) ---
+            while (true) {
+                System.out.print("\nWas soll ich senden? (z.B. 'GET pubkey ETP/2025'):\n> ");
+                String request = userInput.nextLine();
+                out.println(request);
 
-            System.out.println("Empfangen:\n" + pubLine + "\n" + nLine);
+                System.out.println("\nWarte auf Schlüssel vom Server...");
+                String pubLine = in.readLine();
+                String nLine = in.readLine();
 
-            if (pubLine == null || nLine == null || !pubLine.startsWith("pub:") || !nLine.startsWith("N:")) {
-                System.out.println("[FEHLER] Unerwartete Antwort vom Server. (Hat der Server einen Fehler gesendet?)");
-                return;
+                System.out.println("Empfangen:\n" + pubLine + (nLine != null ? "\n" + nLine : ""));
+
+                // Prüfe auf Erfolg
+                if (pubLine != null && nLine != null && pubLine.startsWith("pub:") && nLine.startsWith("N:")) {
+                    // ERFOLG!
+                    e = new BigInteger(pubLine.split(" ")[1], 16);
+                    N = new BigInteger(nLine.split(" ")[1], 16);
+                    System.out.println("\nSchlüssel erfolgreich geparst.");
+                    break; // Verlasse die GET-Schleife
+                } else {
+                    // FEHLER!
+                    System.out.println("[FEHLER] Unerwartete Antwort vom Server.");
+                    System.out.println("Warte 2 Sekunden und versuche es erneut...");
+                    Thread.sleep(2000);
+                    // Die Schleife (while(true)) beginnt von vorn
+                }
             }
 
-            BigInteger e = new BigInteger(pubLine.split(" ")[1], 16);
-            BigInteger N = new BigInteger(nLine.split(" ")[1], 16);
-            System.out.println("\nSchlüssel erfolgreich geparst.");
-
-            // --- SCHRITT 3: NACHRICHT VERSCHLÜSSELN ---
-            System.out.print("\nWelche Nachricht soll ich verschlüsseln und senden?\n> ");
+            // --- SCHRITT 3 & 4: NACHRICHT SENDEN (KEINE SCHLEIFE) ---
+            // Wir sind hier, weil die Schlüsselabfrage erfolgreich war.
+            // Wir können jetzt EINE Nachricht senden, dann beendet der Server
+            // (korrekterweise) die Verbindung.
+            
+            System.out.print("\nWelche Nachricht soll ich verschlüsseln und senden? (max 64 Bytes)\n> ");
             String message = userInput.nextLine();
 
             byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
+            
+            // Warnung, wenn die Nachricht zu lang ist (wie wir besprochen haben)
+            if (messageBytes.length > BLOCK_SIZE_BYTES) {
+                System.out.println("[WARNUNG] Nachricht ist > 64 Bytes. Sie wird abgeschnitten!");
+            }
+
             byte[] paddedMessage = new byte[BLOCK_SIZE_BYTES];
             System.arraycopy(messageBytes, 0, paddedMessage, 0, Math.min(messageBytes.length, BLOCK_SIZE_BYTES));
             
@@ -157,12 +153,14 @@ public class TesterHost {
             BigInteger C = M.modPow(e, N);
             String ciphertextHex = C.toString(16);
 
-            //SCHRITT 4: GEHEIMTEXT SENDEN
             System.out.println("Sende Geheimtext:\n" + ciphertextHex);
             out.println(ciphertextHex);
 
             System.out.println("\n[Rolle 2] Test abgeschlossen.");
             System.out.println(">>> ÜBERPRÜFE JETZT DIE KONSOLE DEINES ETPSERVERS! <<<");
+            
+            // Die Verbindung wird hier enden, da der Server sie schließt.
+            // Ein erneutes Senden ist nicht möglich (und nicht vorgesehen).
 
         } catch (Exception e) {
             System.err.println("[Rolle 2] Fehler: " + e.getMessage());

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-MAIN_CLASS_TH="TesterHost"
+MAIN_CLASS_TH="IT_S.manual_tester.src.TesterHost"
 
 echo "Starte Tester Host..."
 echo "Argumente: $@"
 
-java -cp bin/IT_S/manual_tester/src/ $MAIN_CLASS_TH "$@"
+java -cp bin $MAIN_CLASS_TH "$@"
