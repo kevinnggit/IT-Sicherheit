@@ -30,7 +30,7 @@ scp "$ARCHIVE_NAME" "root@$HOST_IP:"
 
 if [ $? -ne 0 ]; then
     echo "[Fehler] Dateiübertragung fehlgeschlagen."
-    rm "$ARCHIVE_NAME" # Räume lokales Archiv auf
+    # rm "$ARCHIVE_NAME"
     exit 1
 fi
 
