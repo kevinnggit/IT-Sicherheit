@@ -139,7 +139,7 @@ public class TesterHost {
 
             byte[] messageBytes = message.getBytes(StandardCharsets.UTF_8);
             
-            // Warnung, wenn die Nachricht zu lang ist (wie wir besprochen haben)
+            // Warnung, wenn die Nachricht zu lang ist
             if (messageBytes.length > BLOCK_SIZE_BYTES) {
                 System.out.println("[WARNUNG] Nachricht ist > 64 Bytes. Sie wird abgeschnitten!");
             }
@@ -160,7 +160,7 @@ public class TesterHost {
             System.out.println(">>> ÜBERPRÜFE JETZT DIE KONSOLE DEINES ETPSERVERS! <<<");
             
             // Die Verbindung wird hier enden, da der Server sie schließt.
-            // Ein erneutes Senden ist nicht möglich (und nicht vorgesehen).
+            // Ein erneutes Senden ist nicht möglich.
 
         } catch (Exception e) {
             System.err.println("[Rolle 2] Fehler: " + e.getMessage());
