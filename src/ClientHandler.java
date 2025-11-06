@@ -80,6 +80,7 @@ public class ClientHandler extends Thread{
 
             //C --> S: "<ciphertext>"
             String cipherTextHex = in.readLine();
+            System.out.println(cipherTextHex);
 
             if (cipherTextHex == null || cipherTextHex.isEmpty()) {
                 System.out.println("Fehler von " + clientIP + ": " + "Client hat keinen <ciphertext> gesendet.");

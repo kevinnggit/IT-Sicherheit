@@ -10,8 +10,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ETPServer {
-    private static String labor_host = "127.0.0.1";   //10.42.1.23
-    private static int labor_port = 4000;             //3033
+    private static String labor_host = "10.42.1.23";   //127.0.0.1
+    private static int labor_port = 3033;             //4000
     private static final int RSA_BIT_LENGTH = 512;
 
 
