@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# KONFIGURATION
+NAME="Kevin Nguefack Djoukeng"
+EMAIL="kevin.nguefackdjoukeng@smail.hs-bremerhaven.de"
+
+echo "--- 1. Hauptschlüssel (SC) erzeugen ---"
+# gpg --quick-gen-key <userid> [algo [usage [expire]]]
+# gpg --quick-gen-key "$NAME <$EMAIL>" rsa4096 cert,sign 2y
+gpg --quick-gen-key "$NAME <$EMAIL>" ed25519 sign 2y
+
+# "Fingerprint" holen
+# FPR=$(gpg --list-keys --with-colons "$EMAIL" | awk -F: '/^fpr:/ {print $10; exit}')
+FPR=$(gpg --list-keys --with-colons "$EMAIL" | grep '^fpr:' | head -n1 | cut -d: -f10)
+
+echo "--- 2. Unterschlüssel (Subkey) für Verschlüsselung hinzufügen ---"
+echo "...................Erzeuge Verschlüsselungsschlüssel............................"
+gpg --quick-add-key "$FPR" rsa4096 encr 2y
+
+echo "--- 3. Schlüssel exportieren ---"
+gpg --export --armor "$EMAIL" > public_key.asc
+
+gpg --export-secret-keys --armor "$EMAIL" > private_key.asc
+
+echo "Fertig! Schlüsselpaar (SC + sub) erzeugt."
+echo "Bitte bewahren Sie 'private_key.asc' an einem sicheren Ort auf!"
