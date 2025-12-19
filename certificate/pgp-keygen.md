@@ -49,3 +49,4 @@
 
 # Ausgabe konvertieren mit: gpg --show-keys mein_download.asc
 #                           gpg --enarmor < mein_download.asc
+# gpg --ignore-time-conflict --import wkdca38.asc

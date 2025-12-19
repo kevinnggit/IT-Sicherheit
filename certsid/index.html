@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Security Knowledge Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Custom Utilities for Visuals */
+        .cia-circle {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .cia-circle:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        
+        /* Connector Lines for PKI Tree */
+        .tree ul { padding-top: 20px; position: relative; transition: all 0.5s; }
+        .tree li { float: left; text-align: center; list-style-type: none; position: relative; padding: 20px 5px 0 5px; transition: all 0.5s; }
+        .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid #cbd5e1; width: 50%; height: 20px; }
+        .tree li::after { right: auto; left: 50%; border-left: 2px solid #cbd5e1; }
+        .tree li:only-child::after, .tree li:only-child::before { display: none; }
+        .tree li:only-child { padding-top: 0; }
+        .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
+        .tree li:last-child::before { border-right: 2px solid #cbd5e1; border-radius: 0 5px 0 0; }
+        .tree li:first-child::after { border-radius: 5px 0 0 0; }
+        .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #cbd5e1; width: 0; height: 20px; }
+        
+        .tree-item { border: 2px solid #e2e8f0; padding: 10px; text-decoration: none; color: #334155; font-size: 12px; display: inline-block; border-radius: 5px; background: white; transition: all 0.3s; }
+        .tree-item:hover, .tree-item.active { border-color: #6366f1; background: #eef2ff; color: #4338ca; }
+
+        /* Chart Container Standards */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        
+        /* Tab Active States */
+        .tab-active { border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; }
+        .tab-inactive { color: #64748b; }
+        .tab-inactive:hover { color: #334155; }
+
+        .hidden-section { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body class="text-slate-700 h-screen flex flex-col overflow-hidden">
+
+<!-- Top Navigation -->
+<header class="bg-white border-b border-slate-200 shadow-sm z-20 flex-none">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex">
+                <div class="flex-shrink-0 flex items-center">
+                    <div class="h-8 w-8 bg-indigo-600 rounded flex items-center justify-center text-white font-bold mr-2">IT</div>
+                    <span class="font-bold text-xl text-slate-800">Sec<span class="text-indigo-600">Hub</span></span>
+                </div>
+                <nav class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="tab-active inline-flex items-center px-1 pt-1 text-sm font-medium">Foundations</button>
+                    <button onclick="switchTab('crypto')" id="nav-crypto" class="tab-inactive inline-flex items-center px-1 pt-1 text-sm font-medium">Cryptography</button>
+                    <button onclick="switchTab('identity')" id="nav-identity" class="tab-inactive inline-flex items-center px-1 pt-1 text-sm font-medium">Identity & Trust</button>
+                    <button onclick="switchTab('access')" id="nav-access" class="tab-inactive inline-flex items-center px-1 pt-1 text-sm font-medium">Access Control</button>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-8 scroll-smooth">
+    <div class="max-w-7xl mx-auto">
+
+        <!-- SECTION 1: FOUNDATIONS (DASHBOARD) -->
+        <div id="dashboard" class="fade-in space-y-6">
+            <div class="bg-indigo-600 rounded-xl p-6 text-white shadow-lg">
+                <h1 class="text-3xl font-bold mb-2">Security Fundamentals</h1>
+                <p class="text-indigo-100 max-w-3xl">Understanding the core objectives of IT Security (CIA Triad), the distinction between Safety and Security, and the models used to analyze threats (Kill Chains).</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- CIA Triad Interactive -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">The CIA Triad Objectives</h2>
+                    <div class="flex flex-col md:flex-row items-center justify-between">
+                        <div class="relative w-64 h-64 flex-shrink-0 mx-auto">
+                            <div onclick="showCiaDetails('confidentiality')" class="cia-circle absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-32 bg-blue-500 rounded-full opacity-80 mix-blend-multiply flex items-center justify-center text-white font-bold hover:opacity-100">Confidentiality</div>
+                            <div onclick="showCiaDetails('integrity')" class="cia-circle absolute bottom-0 left-0 w-32 h-32 bg-red-500 rounded-full opacity-80 mix-blend-multiply flex items-center justify-center text-white font-bold hover:opacity-100">Integrity</div>
+                            <div onclick="showCiaDetails('availability')" class="cia-circle absolute bottom-0 right-0 w-32 h-32 bg-green-500 rounded-full opacity-80 mix-blend-multiply flex items-center justify-center text-white font-bold hover:opacity-100">Availability</div>
+                        </div>
+                        <div class="mt-4 md:mt-0 md:ml-6 flex-1">
+                            <div id="cia-content" class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <h3 class="font-bold text-indigo-600" id="cia-title">Select a Component</h3>
+                                <p class="text-sm text-slate-600 mt-1" id="cia-desc">Click on the diagram circles to explore the three pillars of information security.</p>
+                                <div id="cia-extra" class="mt-2 text-xs text-slate-500 italic"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Threat Agents & Tools -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Threat Taxonomy</h2>
+                    <p class="text-sm text-slate-600 mb-4">Attacks are deliberate attempts to assault assets. We categorize tools and agents to better defend against them.</p>
+                    <div class="chart-container">
+                        <canvas id="threatChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cyber Kill Chain -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h2 class="text-lg font-bold text-slate-800 mb-4">The Cyber Kill Chain (Intrusion Stages)</h2>
+                <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 relative">
+                    <!-- Connecting Line -->
+                    <div class="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-slate-200 -z-0"></div>
+                    
+                    <!-- Steps -->
+                    <div class="w-full md:w-1/6 p-2 z-10">
+                        <div class="bg-white border-2 border-slate-300 rounded-lg p-3 text-center hover:border-indigo-500 cursor-pointer transition-colors group">
+                            <div class="font-bold text-xs text-slate-500 uppercase">Step 1</div>
+                            <div class="font-semibold text-slate-800">Recon</div>
+                            <div class="hidden group-hover:block absolute mt-2 bg-slate-800 text-white text-xs p-2 rounded shadow-lg z-20 w-48 -ml-4">Planning, Identification, Harvesting email addresses.</div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/6 p-2 z-10">
+                        <div class="bg-white border-2 border-slate-300 rounded-lg p-3 text-center hover:border-indigo-500 cursor-pointer transition-colors group">
+                            <div class="font-bold text-xs text-slate-500 uppercase">Step 2</div>
+                            <div class="font-semibold text-slate-800">Weaponize</div>
+                            <div class="hidden group-hover:block absolute mt-2 bg-slate-800 text-white text-xs p-2 rounded shadow-lg z-20 w-48 -ml-4">Coupling exploit with backdoor into deliverable payload.</div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/6 p-2 z-10">
+                        <div class="bg-white border-2 border-slate-300 rounded-lg p-3 text-center hover:border-indigo-500 cursor-pointer transition-colors group">
+                            <div class="font-bold text-xs text-slate-500 uppercase">Step 3</div>
+                            <div class="font-semibold text-slate-800">Deliver</div>
+                            <div class="hidden group-hover:block absolute mt-2 bg-slate-800 text-white text-xs p-2 rounded shadow-lg z-20 w-48 -ml-4">Transmitting weaponized bundle to victim (e.g., Email).</div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/6 p-2 z-10">
+                        <div class="bg-white border-2 border-slate-300 rounded-lg p-3 text-center hover:border-indigo-500 cursor-pointer transition-colors group">
+                            <div class="font-bold text-xs text-slate-500 uppercase">Step 4</div>
+                            <div class="font-semibold text-slate-800">Exploit</div>
+                            <div class="hidden group-hover:block absolute mt-2 bg-slate-800 text-white text-xs p-2 rounded shadow-lg z-20 w-48 -ml-4">Triggering the code vulnerability on the target system.</div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/6 p-2 z-10">
+                        <div class="bg-white border-2 border-slate-300 rounded-lg p-3 text-center hover:border-indigo-500 cursor-pointer transition-colors group">
+                            <div class="font-bold text-xs text-slate-500 uppercase">Step 5</div>
+                            <div class="font-semibold text-slate-800">Install</div>
+                            <div class="hidden group-hover:block absolute mt-2 bg-slate-800 text-white text-xs p-2 rounded shadow-lg z-20 w-48 -ml-4">Installing malware/backdoor for persistence.</div>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/6 p-2 z-10">
+                        <div class="bg-white border-2 border-slate-300 rounded-lg p-3 text-center hover:border-indigo-500 cursor-pointer transition-colors group">
+                            <div class="font-bold text-xs text-slate-500 uppercase">Step 6</div>
+                            <div class="font-semibold text-slate-800">C2 & Act</div>
+                            <div class="hidden group-hover:block absolute mt-2 bg-slate-800 text-white text-xs p-2 rounded shadow-lg z-20 w-48 -ml-4">Command & Control channel established; Intruder takes action.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: CRYPTOGRAPHY -->
+        <div id="crypto" class="hidden-section space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-indigo-500">
+                <h2 class="text-xl font-bold text-slate-800">Cryptographic Systems</h2>
+                <p class="text-slate-600 mt-2">Cryptography transforms readable data (Plaintext) into unreadable data (Ciphertext) using a Key. Modern systems are split into Symmetric (Shared Key) and Asymmetric (Public/Private Key pair).</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Interactive Caesar Cipher -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg mb-4 text-slate-800">Interactive Lab: Substitution Cipher</h3>
+                    <p class="text-xs text-slate-500 mb-4">A monoalphabetic substitution (like Caesar) replaces each letter with the n-th letter after it. This is easily broken but demonstrates the core concept.</p>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Plaintext</label>
+                            <input type="text" id="cipherInput" value="HELLO WORLD" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 border p-2" oninput="updateCipher()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700">Shift Key (k)</label>
+                            <input type="number" id="cipherKey" value="3" class="mt-1 block w-20 rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-slate-50 border p-2" oninput="updateCipher()">
+                        </div>
+                        <div class="p-4 bg-slate-900 rounded-lg mt-4">
+                            <label class="block text-xs font-mono text-slate-400 mb-1">Ciphertext Output</label>
+                            <div id="cipherOutput" class="text-green-400 font-mono text-lg tracking-widest">KHOOR ZRUOG</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Block Cipher Modes Visualizer -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg mb-4 text-slate-800">Symmetric Block Modes</h3>
+                    <p class="text-xs text-slate-500 mb-4">Why ECB is dangerous: It encrypts identical blocks identically. CBC chains blocks to hide patterns.</p>
+                    
+                    <div class="space-y-4">
+                        <!-- ECB Rep -->
+                        <div class="border rounded p-3">
+                            <h4 class="font-bold text-sm text-red-600 mb-2">ECB (Electronic Code Book)</h4>
+                            <div class="flex space-x-1">
+                                <div class="h-8 w-8 bg-blue-200 border border-blue-400 flex items-center justify-center text-xs">A</div>
+                                <div class="h-8 w-8 bg-blue-200 border border-blue-400 flex items-center justify-center text-xs">A</div>
+                                <span class="flex items-center text-slate-400">→</span>
+                                <div class="h-8 w-8 bg-slate-800 border border-slate-600 flex items-center justify-center text-white text-xs">X</div>
+                                <div class="h-8 w-8 bg-slate-800 border border-slate-600 flex items-center justify-center text-white text-xs">X</div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Pattern remains visible.</p>
+                        </div>
+
+                        <!-- CBC Rep -->
+                        <div class="border rounded p-3">
+                            <h4 class="font-bold text-sm text-green-600 mb-2">CBC (Cipher Block Chaining)</h4>
+                            <div class="flex space-x-1 items-center">
+                                <div class="h-8 w-8 bg-blue-200 border border-blue-400 flex items-center justify-center text-xs">A</div>
+                                <div class="h-8 w-8 bg-blue-200 border border-blue-400 flex items-center justify-center text-xs">A</div>
+                                <span class="flex items-center text-slate-400 text-xs mx-1">+IV/Prev</span>
+                                <span class="flex items-center text-slate-400">→</span>
+                                <div class="h-8 w-8 bg-slate-800 border border-slate-600 flex items-center justify-center text-white text-xs">X</div>
+                                <div class="h-8 w-8 bg-slate-800 border border-slate-600 flex items-center justify-center text-white text-xs">Y</div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Patterns hidden via chaining.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Length Comparison Chart -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <h3 class="font-bold text-lg mb-4 text-slate-800">Computational Security: Key Space</h3>
+                <div class="chart-container">
+                    <canvas id="keySpaceChart"></canvas>
+                </div>
+                <p class="text-xs text-center text-slate-500 mt-2">Note: Scale is Logarithmic. The difference between 56-bit and 128-bit is astronomical.</p>
+            </div>
+        </div>
+
+        <!-- SECTION 3: IDENTITY & TRUST -->
+        <div id="identity" class="hidden-section space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-teal-500">
+                <h2 class="text-xl font-bold text-slate-800">Identity & Trust Services</h2>
+                <p class="text-slate-600 mt-2">Authentication verifies identity (Who are you?). Certificates and PKI create a chain of trust to validate those identities in a digital space.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- PKI Tree Visualization -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 overflow-x-auto">
+                    <h3 class="font-bold text-lg mb-4 text-slate-800">PKI Trust Hierarchy (X.509)</h3>
+                    <p class="text-xs text-slate-500 mb-4">A Root CA signs Intermediate CAs, which sign User/Server Certificates. Browsers trust the Root.</p>
+                    
+                    <div class="tree flex justify-center min-w-[400px]">
+                        <ul>
+                            <li>
+                                <a href="#" class="tree-item bg-amber-50 border-amber-300 font-bold">Root CA<br><span class="text-xs font-normal">(Self-Signed)</span></a>
+                                <ul>
+                                    <li>
+                                        <a href="#" class="tree-item">Intermediate CA 1</a>
+                                        <ul>
+                                            <li><a href="#" class="tree-item">Server Cert<br>(google.com)</a></li>
+                                            <li><a href="#" class="tree-item">User Cert<br>(Email)</a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="tree-item">Intermediate CA 2</a>
+                                        <ul>
+                                            <li><a href="#" class="tree-item">Code Signing<br>Cert</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Password Storage Flow -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg mb-4 text-slate-800">Secure Password Storage</h3>
+                    <p class="text-xs text-slate-500 mb-4">Never store plaintext. Use Salt + Hash to prevent Rainbow Table attacks.</p>
+                    
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between bg-slate-50 p-2 rounded border">
+                            <span class="text-sm font-mono">User Input: "password123"</span>
+                            <span class="text-slate-400">→</span>
+                            <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Do NOT Store</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-slate-50 p-2 rounded border">
+                            <span class="text-sm font-mono">Hash("password123")</span>
+                            <span class="text-slate-400">→</span>
+                            <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Vulnerable (Rainbow Tables)</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-green-50 p-2 rounded border border-green-200">
+                            <span class="text-sm font-mono">Hash("password123" + Salt)</span>
+                            <span class="text-slate-400">→</span>
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Secure Storage</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <h4 class="font-bold text-sm text-slate-700">Authentication Factors</h4>
+                        <div class="grid grid-cols-3 gap-2 mt-2 text-center text-xs">
+                            <div class="bg-slate-100 p-2 rounded">
+                                <span class="block font-bold">Knowledge</span>
+                                Password, PIN
+                            </div>
+                            <div class="bg-slate-100 p-2 rounded">
+                                <span class="block font-bold">Possession</span>
+                                Token, Phone
+                            </div>
+                            <div class="bg-slate-100 p-2 rounded">
+                                <span class="block font-bold">Biometric</span>
+                                Fingerprint, Face
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: ACCESS CONTROL -->
+        <div id="access" class="hidden-section space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-500">
+                <h2 class="text-xl font-bold text-slate-800">Access Control Models</h2>
+                <p class="text-slate-600 mt-2">Determining who can do what. From simple Matrix models to Role-Based (RBAC) and Mandatory (MAC) systems.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Access Matrix Interactive -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg mb-4 text-slate-800">Discretionary Access Control (DAC) Matrix</h3>
+                    <p class="text-xs text-slate-500 mb-4">The owner defines rights. Click cells to toggle permissions (Read/Write/Execute).</p>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full text-sm text-left">
+                            <thead class="bg-slate-100 text-slate-600 font-bold">
+                                <tr>
+                                    <th class="p-2">Subject \ Object</th>
+                                    <th class="p-2">File 1</th>
+                                    <th class="p-2">File 2</th>
+                                    <th class="p-2">App 1</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr>
+                                    <td class="p-2 font-bold">Alice</td>
+                                    <td class="p-2 cursor-pointer hover:bg-slate-50" onclick="togglePerm(this)">RW</td>
+                                    <td class="p-2 cursor-pointer hover:bg-slate-50" onclick="togglePerm(this)">-</td>
+                                    <td class="p-2 cursor-pointer hover:bg-slate-50" onclick="togglePerm(this)">X</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-bold">Bob</td>
+                                    <td class="p-2 cursor-pointer hover:bg-slate-50" onclick="togglePerm(this)">R</td>
+                                    <td class="p-2 cursor-pointer hover:bg-slate-50" onclick="togglePerm(this)">RW</td>
+                                    <td class="p-2 cursor-pointer hover:bg-slate-50" onclick="togglePerm(this)">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-bold">Admin</td>
+                                    <td class="p-2 cursor-pointer hover:bg-slate-50" onclick="togglePerm(this)">RWX</td>
+                                    <td class="p-2 cursor-pointer hover:bg-slate-50" onclick="togglePerm(this)">RWX</td>
+                                    <td class="p-2 cursor-pointer hover:bg-slate-50" onclick="togglePerm(this)">RWX</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Bell-LaPadula Model -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg mb-4 text-slate-800">Mandatory Access Control (MAC)</h3>
+                    <p class="text-xs text-slate-500 mb-2">Example: Bell-LaPadula Model (Confidentiality focus).</p>
+                    
+                    <div class="relative h-48 border rounded bg-slate-50 flex flex-col justify-between p-4">
+                        <div class="bg-red-100 border border-red-300 text-red-800 p-2 rounded text-center font-bold text-sm">TOP SECRET</div>
+                        <div class="bg-orange-100 border border-orange-300 text-orange-800 p-2 rounded text-center font-bold text-sm">SECRET</div>
+                        <div class="bg-green-100 border border-green-300 text-green-800 p-2 rounded text-center font-bold text-sm">UNCLASSIFIED</div>
+                        
+                        <!-- Arrows -->
+                        <div class="absolute right-4 top-4 bottom-4 w-1/3 flex flex-col justify-center text-xs space-y-4">
+                            <div class="flex items-center text-slate-600">
+                                <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                                No Read Up
+                            </div>
+                            <div class="flex items-center text-slate-600">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                No Write Down
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2 italic">A user at "Secret" cannot read "Top Secret" (Confidentiality) and cannot write to "Unclassified" (to prevent leakage).</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<script>
+    // --- Navigation Logic ---
+    function switchTab(tabId) {
+        // Hide all sections
+        document.querySelectorAll('[id^="dashboard"], [id^="crypto"], [id^="identity"], [id^="access"]').forEach(el => {
+            if(el.tagName === 'DIV' && el.parentElement.tagName === 'MAIN') el.classList.add('hidden-section');
+        });
+        
+        // Show selected section
+        document.getElementById(tabId).classList.remove('hidden-section');
+        document.getElementById(tabId).classList.add('fade-in');
+
+        // Update Tabs
+        document.querySelectorAll('nav button').forEach(btn => {
+            btn.className = 'tab-inactive inline-flex items-center px-1 pt-1 text-sm font-medium';
+        });
+        document.getElementById('nav-' + tabId).className = 'tab-active inline-flex items-center px-1 pt-1 text-sm font-medium';
+    }
+
+    // --- CIA Triad Interactions ---
+    function showCiaDetails(type) {
+        const title = document.getElementById('cia-title');
+        const desc = document.getElementById('cia-desc');
+        const extra = document.getElementById('cia-extra');
+
+        if(type === 'confidentiality') {
+            title.innerText = 'Confidentiality';
+            title.className = 'font-bold text-blue-600';
+            desc.innerText = 'Ensuring that information is not made available or disclosed to unauthorized individuals, entities, or processes. (e.g., Encryption, Access Lists).';
+            extra.innerText = 'Attack Vector: Sniffing, Keylogging, Dumpster Diving.';
+        } else if(type === 'integrity') {
+            title.innerText = 'Integrity';
+            title.className = 'font-bold text-red-600';
+            desc.innerText = 'Maintaining the accuracy and completeness of data over its entire lifecycle. Data must not be changed in transit or storage by unauthorized means.';
+            extra.innerText = 'Attack Vector: Man-in-the-Middle modification, Database injection.';
+        } else if(type === 'availability') {
+            title.innerText = 'Availability';
+            title.className = 'font-bold text-green-600';
+            desc.innerText = 'Ensuring that information and resources are accessible to authorized users when needed.';
+            extra.innerText = 'Attack Vector: Denial of Service (DoS), Ransomware.';
+        }
+    }
+
+    // --- Caesar Cipher Logic ---
+    function updateCipher() {
+        const input = document.getElementById('cipherInput').value.toUpperCase();
+        const key = parseInt(document.getElementById('cipherKey').value) || 0;
+        let output = "";
+
+        for (let i = 0; i < input.length; i++) {
+            let charCode = input.charCodeAt(i);
+            if (charCode >= 65 && charCode <= 90) {
+                // Shift logic: (Char - 65 + k) % 26 + 65
+                let shifted = ((charCode - 65 + key) % 26);
+                if (shifted < 0) shifted += 26; // Handle negative shift
+                output += String.fromCharCode(shifted + 65);
+            } else {
+                output += input[i];
+            }
+        }
+        document.getElementById('cipherOutput').innerText = output;
+    }
+
+    // --- Access Matrix Toggle ---
+    function togglePerm(cell) {
+        const states = ['-', 'R', 'W', 'X', 'RW', 'RWX'];
+        let current = cell.innerText;
+        let index = states.indexOf(current);
+        let next = states[(index + 1) % states.length];
+        cell.innerText = next;
+        
+        // Visual feedback
+        if(next === '-') cell.style.color = '#cbd5e1';
+        else cell.style.color = '#334155';
+    }
+
+    // --- Chart.js Initialization ---
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // Threat Chart (Doughnut)
+        const ctxThreat = document.getElementById('threatChart').getContext('2d');
+        new Chart(ctxThreat, {
+            type: 'doughnut',
+            data: {
+                labels: ['Malware/Ransomware', 'Social Engineering', 'DoS/DDoS', 'Web Attacks', 'Insider Threats'],
+                datasets: [{
+                    data: [35, 25, 15, 15, 10],
+                    backgroundColor: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#64748b'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+
+        // Key Space Chart (Bar) - Logarithmic Scale
+        const ctxKey = document.getElementById('keySpaceChart').getContext('2d');
+        new Chart(ctxKey, {
+            type: 'bar',
+            data: {
+                labels: ['DES (56-bit)', 'AES (128-bit)', 'AES (256-bit)'],
+                datasets: [{
+                    label: 'Key Space (Approx. Combinations)',
+                    data: [7.2e16, 3.4e38, 1.1e77],
+                    backgroundColor: ['#ef4444', '#f59e0b', '#22c55e']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        type: 'logarithmic',
+                        title: { display: true, text: 'Possible Keys (Log Scale)' }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y > 1e20) {
+                                    label += 'Astronomical';
+                                } else {
+                                    label += context.parsed.y.toExponential(2);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
