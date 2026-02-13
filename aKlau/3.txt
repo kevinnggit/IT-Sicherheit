@@ -1,0 +1,108 @@
+--------------------------------------------------------------------------------
+Asymmetrie
+--------------------------------------------------------------------------------
+
+1. [cite_start]DIFFIE-HELLMAN (DH) SCHLÜSSELAUSTAUSCH [cite: 161-176]
+--------------------------------------------------------------------------------
+Historischer Kontext: 1976. Erstes Verfahren, um über einen unsicheren/öffentlichen 
+Kanal ein gemeinsames Geheimnis zu vereinbaren.
+
+Das Problem:
+Wie tauscht man einen Schlüssel aus, wenn jeder mithört?
+
+Die Mathematik (Diskreter Logarithmus):
+Es ist leicht, g^x mod p zu rechnen (Vorwärts), aber extrem schwer, aus dem 
+Ergebnis x zu berechnen (Rückwärts).
+
+Der Ablauf:
+1. Public: Beide einigen sich auf Primzahl q und Generator a.
+2. Private: Alice wählt geheimes xA, Bob wählt geheimes xB.
+3. Austausch:
+   - Alice sendet: yA = a^xA mod q
+   - Bob sendet:   yB = a^xB mod q
+4. Ergebnis (Shared Secret):
+   - Alice rechnet: (yB)^xA mod q
+   - Bob rechnet:   (yA)^xB mod q
+   => Beide haben nun denselben Wert K_AB = a^(xA*xB), ohne ihn gesendet zu haben.
+
+[DIAGRAMM: Diffie-Hellman Key Exchange]
+(Stell dir vor: Alice und Bob senden ihre öffentlichen Teile yA/yB über die Linie, 
+berechnen unten aber isoliert das gleiche K_AB.)
+
+Sicherheit & Schwachstelle:
+- Sicher gegen passives Mithören (dank Discrete Log Problem).
+- UNSICHER gegen aktive Angreifer: Person-in-the-Middle (PitM).
+  [cite_start]Da DH keine Identitäten prüft, kann sich jemand dazwischenschalten [cite: 180-182].
+
+2. [cite_start]ANWENDUNG ASYMMETRISCHER KRYPTOGRAPHIE [cite: 190-250]
+--------------------------------------------------------------------------------
+Unterschied zu Symmetrisch: Es gibt zwei Schlüssel (Public & Private).
+
+Verschlüsseln vs. Signieren:
+- Verschlüsseln: Public Key nutzen -> Nur Besitzer des Private Key kann lesen.
+- Signieren: Private Key nutzen -> Jeder kann mit Public Key prüfen, dass es vom 
+  Besitzer kommt.
+
+WICHTIG: Sign-then-Encrypt
+- Reihenfolge: Erst signieren (den Klartext), dann verschlüsseln.
+- Grund: Man soll nie etwas signieren, das man nicht lesen kann (verschlüsseltes Zeug). 
+  Wer den Klartext signiert, beweist Wissen über den Inhalt ("Prudent Engineering Practice").
+
+[cite_start]Hybride Verschlüsselung [cite: 251-260]:
+- Problem: Asymmetrisch (RSA) ist langsam und rechenintensiv.
+- Lösung: Nutze RSA nur, um einen symmetrischen Session Key (z.B. AES) auszutauschen.
+- Datenverkehr: Wird dann schnell mit dem Session Key verschlüsselt.
+
+[DIAGRAMM: Hybrid Encryption Scheme]
+(Alice verschlüsselt die Nachricht m symmetrisch mit K_AB. Den Schlüssel K_AB 
+verschlüsselt sie asymmetrisch mit Bobs Public Key K_O. Beides wird gesendet.)
+
+3. [cite_start]RSA (RIVEST, SHAMIR, ADLEMAN) [cite: 261-340]
+--------------------------------------------------------------------------------
+Der Standard-Algorithmus. Basiert auf Faktorisierung großer Zahlen.
+
+Schlüsselerzeugung (Key Gen):
+1. Wähle zwei große Primzahlen p, q.
+2. Modul n = p * q.
+3. Euler-Funktion phi(n) = (p-1)(q-1).
+4. Wähle Public Exponent e (oder c), teilerfremd zu phi(n).
+5. Berechne Private Exponent d: e * d = 1 mod phi(n).
+
+Die Rechnung:
+- Encrypt: c = m^e mod n
+- Decrypt: m = c^d mod n
+
+RSA Homomorphie (Feature & Bug):
+- RSA ist multiplikativ homomorph: E(x) * E(y) = E(x*y).
+- Das heißt: Man kann mit verschlüsselten Werten rechnen (multiplizieren), ohne sie 
+  zu entschlüsseln. Das ermöglicht spezielle Angriffe (siehe 4.).
+
+4. [cite_start]ANGRIFFE & PROTOKOLLE [cite: 373-439]
+--------------------------------------------------------------------------------
+
+A) Davida's Attack (Signatur-Fälschung)
+- Ziel: Opfer soll m signieren, will es aber nicht.
+- Trick (Blinding): Angreifer multipliziert m mit Zufallszahl y (versteckt m).
+- Aktion: Opfer signiert den "Müll" (blinded m).
+- Ende: Angreifer rechnet y wieder raus (Unblinding) -> Hat gültige Signatur für m.
+- Gegenmaßnahme: Niemals gleiches Schlüsselpaar für Signatur & Verschlüsselung nutzen!
+
+B) Chaum's Digital Cash (Blind Signatures)
+- Nutzt "Blinding" positiv für Privatsphäre.
+- Ziel: Bank soll Geld (Coin) signieren, aber nicht wissen, wem der Coin gehört.
+- Ablauf:
+  1. Alice erstellt Coin, "blindet" ihn (Umschlag).
+  2. Bank signiert den Umschlag (blinded coin), bucht Geld ab.
+  3. Alice entfernt Blinding -> Hat gültigen Coin mit Banksignatur.
+  4. Bank hat den "klaren" Coin nie gesehen -> Alice bleibt anonym beim Bezahlen.
+- Problem: Double Spending (Kopieren). Bank muss Liste aller ausgegebenen Coins führen.
+
+[DIAGRAMM: Chaum's Digital Cash]
+(Zeigt den Kreis: Alice -> Bank (blinded) -> Alice (unblinded) -> Dealer (payment) -> Bank (check).)
+
+5. [cite_start]POST-QUANTUM CRYPTOGRAPHY (AUSBLICK) [cite: 582-587]
+--------------------------------------------------------------------------------
+Quantencomputer brechen RSA & DH (Shor-Algorithmus).
+NIST Standards (Quantensicher):
+- Verschlüsselung: CRYSTALS-Kyber
+- Signaturen: CRYSTALS-Dilithium

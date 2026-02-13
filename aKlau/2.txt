@@ -1,0 +1,66 @@
+================================================================================
+SYMMETRISCHE KRYPTOGRAPHIE
+================================================================================
+
+1. GRUNDLAGEN & HISTORIE
+--------------------------------------------------------------------------------
+- Prinzip: Ein geheimer Schlüssel für Verschlüsselung UND Entschlüsselung .
+- Substitution: Zeichen ersetzen (z.B. Caesar). Problem: Häufigkeitsanalyse knackt das sofort, weil "E" im Klartext immer "X" im Chiffretext bleibt .
+- Transposition: Zeichenreihenfolge ändern (durcheinanderwürfeln) .
+- Polyalphabetisch (Vigenère): Nutzt mehrere Alphabete/Schlüsselwörter, um die Häufigkeitsverteilung zu glätten .
+
+2. SICHERHEIT & ONE-TIME-PAD (OTP)
+--------------------------------------------------------------------------------
+- Unconditional Security (Perfekte Sicherheit): Nachricht lässt sich mathematisch nicht knacken, egal wie viel Rechenpower man hat .
+- One-Time-Pad (OTP): Das einzige Verfahren mit perfekter Sicherheit .
+  -> Bedingung: Schlüssel ist zufällig und GENAUSO LANG wie die Nachricht .
+  -> Praxis-Problem: Key-Management ist die Hölle, daher kaum nutzbar .
+- Computational Security: Knackbar, aber dauert zu lange (Milliarden Jahre). Das nutzen wir heute (AES etc.) .
+
+3. BLOCK CIPHER MODES (KLAUSUR-KERNTHEMA)
+--------------------------------------------------------------------------------
+Problem: Blockchiffren können nur kleine Blöcke (z.B. 64/128 Bit) verschlüsseln. Wie macht man das bei langen Dateien?
+
+A) ECB (Electronic Code Book) 
+   - Jeder Block wird einzeln mit dem Key verschlüsselt.
+   - RIESEN PROBLEM: Gleiche Klartext-Blöcke = Gleiche Geheimtext-Blöcke.
+   - Pinguin-Effekt: Man erkennt Muster (z.B. Bilder) trotz Verschlüsselung .
+   - Merke: Nur für sehr kurze, zufällige Daten nutzen, niemals für Dateien/Bilder.
+
+B) CBC (Cipher Block Chaining) 
+   - Standard-Lösung gegen Muster.
+   - Prinzip: Klartext wird vor Verschlüsselung mit dem VORGÄNGER-Geheimtext ver-XORt.
+   - Start: Braucht einen Initialisierungsvektor (IV) für den ersten Block .
+   - Fehlerfortpflanzung: Wenn 1 Bit im Ciphertext kippt ->
+     1. Der direkt betroffene Block ist beim Entschlüsseln kompletter Müll.
+     2. Im NÄCHSTEN Block kippt genau 1 Bit an der gleichen Stelle .
+
+C) OFB (Output Feedback) 
+   - Macht aus der Blockchiffre eine Stromchiffre.
+   - Keystream wird unabhängig vom Text erzeugt.
+   - Vorteil: Keine Fehlerfortpflanzung (1 Bit Fehler im Funk = 1 Bit Fehler im Text).
+   - Nachteil: Anfällig für Bit-Flipping-Attacken (Angreifer ändert gezielt Werte).
+
+D) CTR (Counter Mode) 
+   - Modernster Standard.
+   - Verschlüsselt einen Zähler (Nonce + 1, Nonce + 2...), dann XOR mit Text.
+   - KILLER-FEATURE: Parallelisierung. Man kann Block 50 entschlüsseln, ohne auf 1-49 zu warten . Sehr schnell.
+
+4. HASH-FUNKTIONEN
+--------------------------------------------------------------------------------
+- Ziel: Beliebige Datenmenge -> Fester Hashwert (Fingerabdruck) .
+- Wichtig: Nicht umkehrbar (Einwegfunktion).
+- Sicherheits-Level :
+  1. Preimage Resistance: Zu Hash h findet man keine Nachricht m.
+  2. Second-Preimage: Zu Nachricht m1 findet man keine m2 mit gleichem Hash.
+  3. Collision Resistance (Stark): Man findet KEIN Paar (beliebig), das kollidiert.
+- Empfehlung: SHA-2 oder SHA-3. (MD5 und SHA-1 sind kaputt/unsicher) .
+
+5. MAC & HMAC (AUTHENTIZITÄT)
+--------------------------------------------------------------------------------
+- Hash allein beweist nur Integrität (nichts verändert), nicht Authentizität (WER hat es geschickt).
+- MAC: Hash + Secret Key .
+- Problem bei einfachem "Hash(Key + Msg)": Length-Extension Attack .
+- Lösung HMAC: Verschachtelter Hash -> Hash(Key_out + Hash(Key_in + Msg)) .
+  -> Nutzt "ipad" und "opad" Konstanten .
+  -> Standard in TLS und IPsec .

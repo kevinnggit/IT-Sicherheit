@@ -1,0 +1,88 @@
+================================================================================
+IT-SICHERHEIT GRUNDLAGEN
+================================================================================
+
+1. DIE SCHUTZZIELE DER IT-SICHERHEIT (CIA-TRIADE)
+--------------------------------------------------------------------------------
+Das Fundament der Sicherheit besteht aus drei Säulen:
+- Confidentiality (Vertraulichkeit): Nur Berechtigte dürfen Daten lesen. 
+  -> Gegenmaßnahmen: Verschlüsselung, Zugriffsrechte.
+- Integrity (Integrität): Daten müssen korrekt und unverändert sein. Änderungen müssen erkennbar sein.
+- Availability (Verfügbarkeit): Systeme und Daten müssen funktionieren, wenn man sie braucht.
+  -> Beispiel-Angriff: Denial of Service (DoS) greift gezielt die Verfügbarkeit an.
+
+Erweiterte Ziele (nach Eckert):
+- Authentizität: Die Quelle einer Nachricht ist zweifelsfrei identifizierbar (keine Fälschung).
+- Non-Repudiation (Unabstreitbarkeit): Handlungen (z. B. Vertragsabschluss) können nicht geleugnet werden. Wichtig für rechtliche Beweise.
+
+2. SAFETY VS. SECURITY
+--------------------------------------------------------------------------------
+Beides bedeutet "Sicherheit", aber der Fokus ist anders:
+
+- Safety (Betriebssicherheit):
+  -> Ursache: Zufall, Umwelt, Bedienfehler
+  -> Richtung: Das System schadet der Umwelt (z. B. Zugunglück).
+
+- Security (Angriffssicherheit):
+  -> Ursache: Absicht, gezielter Angriff (Hacker)
+  -> Richtung: Die Umwelt schadet dem System (z. B. Virus).
+
+3. RISIKOMANAGEMENT
+--------------------------------------------------------------------------------
+- Formel: R = D x P
+  -> R = Risiko (Erwarteter Schaden)
+  -> D = Damage (Schadenshöhe)
+  -> P = Probability (Wahrscheinlichkeit)
+
+- Zusammenhang: Eine Bedrohung (Threat) ist erst gefährlich, wenn sie auf eine Schwachstelle (Vulnerability) trifft.
+- Lösung: Der Eigentümer ergreift Gegenmaßnahmen (Countermeasures), um Schwachstellen zu schließen und das Risiko zu senken.
+
+4. ANGRIFFSARTEN
+--------------------------------------------------------------------------------
+- Passiver Angriff: Nur Abhören/Mitlesen (z. B. Sniffing). Das System wird nicht verändert. Schwer zu entdecken.
+- Aktiver Angriff: Das System oder Daten werden verändert oder manipuliert. Hinterlässt Spuren.
+
+5. DIE CYBER KILL CHAIN (7 PHASEN EINES ANGRIFFS)
+--------------------------------------------------------------------------------
+Ein Modell von Lockheed Martin, das den Ablauf eines gezielten Angriffs beschreibt:
+- Reconnaissance (Aufklärung): Informationen über das Ziel sammeln (E-Mails, Server-Infos), noch kein Angriff.
+- Weaponization (Aufrüstung): Erstellen der "Waffe" (Exploit + Payload/Backdoor werden in eine Datei verpackt, z. B. PDF).
+- Delivery (Zustellung): Übermittlung der Waffe an das Opfer (E-Mail, USB-Stick).
+- Exploitation (Ausnutzung): Der Schadcode nutzt eine Sicherheitslücke (Vulnerability) aus, um ausgeführt zu werden.
+- Installation: Der Angreifer nistet sich dauerhaft ein (Persistenz), z. B. durch eine Backdoor oder Registry-Einträge.
+- Command & Control (C2): Der infizierte Rechner ("Bot") verbindet sich mit dem Angreifer-Server, um Befehle zu empfangen.
+- Actions on Objectives: Das eigentliche Ziel wird ausgeführt (Daten klauen, Verschlüsselung/Ransomware, Zerstörung).
+
+What defines a Hacker?
+- extremely clever
+- using technology beyond intended purpose
+- without harm
+
+6. MALWARE & ATTACK TOOLS (DER "MALWARE ZOO")
+--------------------------------------------------------------------------------
+Hier ist die Unterscheidung der Begriffe entscheidend:
+- Virus: Ein Schadprogramm, das sich nicht selbstständig ausführen kann. Es benötigt ein Wirtsprogramm (Host), in das es sich einnistet, um sich zu verbreiten (z. B. in eine .exe oder ein Makro).
+- Wurm (Worm): Ein eigenständiges Programm, das sich selbst repliziert und über Netzwerke verbreitet. Es braucht keinen Wirt.
+- Trojaner (Trojan Horse): Tarnt sich als nützliches Programm, führt im Hintergrund aber schädliche Aktionen aus. Der Nutzer installiert es oft selbst, weil er getäuscht wurde.
+- Rootkit: Eine Sammlung von Werkzeugen, um den Zugriff auf einen gehackten Rechner dauerhaft zu sichern und zu verbergen. Es versteckt Prozesse oder Dateien vor dem Betriebssystem.
+- Backdoor: Eine "Hintertür", die die normale Authentifizierung umgeht, damit der Angreifer jederzeit wieder Zugriff hat.
+- Botnet: Ein Netzwerk aus infizierten Computern ("Zombies" oder "Bots"), die von einem "Bot Herder" ferngesteuert werden (z. B. für Spam oder DDoS-Angriffe).
+- Ransomware: Verschlüsselt Daten auf dem Opfer-Rechner und fordert Lösegeld für die Entschlüsselung.
+- Keylogger: Protokollierte Tastatureingaben, um Passwörter oder sensible Daten abzufangen.
+- Exploit: Spezieller Code, der eine ganz bestimmte Sicherheitslücke (Vulnerability) ausnutzt, um Schaden anzurichten.
+
+7. SPEZIFISCHE ANGRIFFSARTEN & TAKTIKEN
+--------------------------------------------------------------------------------
+- APT (Advanced Persistent Threat): Ein hochentwickelter, zielgerichteter Angriff, bei dem sich der Angreifer über einen langen Zeitraum im System festsetzt. Oft staatliche Akteure oder Industriespionage.
+- Phishing: Der Versuch, Nutzer durch Täuschung (z. B. gefälschte E-Mails) zur Herausgabe von Daten (Passwörter) zu bringen.
+  -> Spear-Phishing: Gezielter Angriff auf eine bestimmte Person oder Gruppe (höhere Erfolgschance).
+  -> Whale-Phishing: Phishing, das speziell auf hochrangige Ziele ("große Fische") wie Geschäftsführer abzielt.
+- Man-in-the-Middle (MitM): Der Angreifer schaltet sich unbemerkt in die Kommunikation zwischen zwei Parteien und kann Daten mitlesen oder verändern.
+- DoS / DDoS (Distributed Denial of Service): Überlastung eines Dienstes, um die Verfügbarkeit zu stören. Bei DDoS erfolgt der Angriff koordiniert von vielen Rechnern (Botnet) gleichzeitig.
+- Drive-by-Download: Unbemerkter Download von Schadsoftware allein durch das Besuchen einer präparierten Webseite.
+- Credential Stuffing: Ausprobieren von gestohlenen Zugangsdaten (von einem anderen Hack) bei vielen verschiedenen Diensten, in der Hoffnung, dass der Nutzer Passwörter wiederverwendet.
+
+TTP (Tactics, Techniques, and Procedures):
+- Tactics (Taktik): Was will der Angreifer erreichen? (Das strategische Ziel, z. B. „Initial Access“ oder „Exfiltration“).
+- Techniques (Technik): Wie will er das erreichen? (Die Methode, z. B. „Spearphishing“ oder „Brute Force“).
+- Procedures (Vorgehensweise): Womit und im Detail? (Die spezifischen Schritte und Tools, die genau so ausgeführt werden).

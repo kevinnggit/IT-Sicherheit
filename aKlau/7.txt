@@ -1,0 +1,92 @@
+COMMUNICATION SECURITY
+======================================================================
+
+1. GRUNDLAGEN DER KOMMUNIKATIONSSICHERHEIT
+------------------------------------------
+Das Hauptziel ist der Schutz der Kommunikation hinsichtlich Vertraulichkeit, 
+[cite_start]Integrität und Verfügbarkeit[cite: 3304].
+
+Angreifermodelle:
+- [cite_start]Passiver Angreifer ("Eve"): Hört nur mit, verändert keine Daten[cite: 3333, 3339].
+- Dolev-Yao-Angreifer (DYA): Ein aktives Angreifermodell. Der Angreifer kann 
+  Nachrichten abfangen, lesen, modifizieren und synthetisieren, hat aber keinen 
+  [cite_start]Zugriff auf private Schlüssel (Perfect Public Key System)[cite: 3555, 3557].
+
+"Prudent Engineering Practice" (Abadi & Needham):
+Ein wichtiger Leitsatz für Protokolle ist, dass jede Nachricht ihre Bedeutung 
+[cite_start]selbst enthalten sollte und die Interpretation nur vom Inhalt abhängt[cite: 3326].
+
+2. AUTHENTIFIZIERUNGSPROTOKOLLE & SCHLÜSSELAUSTAUSCH
+----------------------------------------------------
+Der Fokus liegt auf der Verteilung von Sitzungsschlüsseln (Session Keys) und der 
+Authentifizierung über unsichere Netzwerke.
+
+Needham-Schroeder Protokoll (Asymmetrisch & Symmetrisch):
+- [cite_start]Ziel: Sicherer Austausch von Schlüsseln und Authentifizierung[cite: 3347].
+- Schwachstellen: Das ursprüngliche Protokoll war anfällig für Replay-Angriffe 
+  und Man-in-the-Middle-Attacken (z.B. Lowes Angriff), weil nicht klar war, 
+  [cite_start]für welche Kommunikation bestimmte Nonces gedacht waren[cite: 3416, 3429].
+- Lösung: Identitäten der Partner müssen explizit in den Nachrichten genannt werden 
+  (z.B. Einbeziehung der Identität des Antwortenden in Nachricht 6) [cite_start][cite: 3434].
+  Zudem helfen Zeitstempel oder Nonces, um die "Frische" (Freshness) der 
+  [cite_start]Nachricht zu garantieren[cite: 3513].
+
+Kerberos:
+- Basiert auf Needham-Schroeder und nutzt einen vertrauenswürdigen Dritten (KDC - 
+  [cite_start]Key Distribution Center)[cite: 3348, 3374].
+- Architektur: Besteht aus Authentication Service (AS) und Ticket Granting Service 
+  (TGS). Der Client authentifiziert sich beim AS, erhält ein Ticket vom TGS und 
+  [cite_start]nutzt dieses für Dienste (z.B. AFS, SQL)[cite: 3374, 3377].
+- Vorteil: Zentrale Sicherheitsprüfung, Server müssen Authentifizierung nicht 
+  [cite_start]selbst implementieren[cite: 3352].
+
+3. SICHERHEITSATTRIBUTE: PERFECT FORWARD SECRECY (PFS)
+------------------------------------------------------
+- Problem: Wenn ein Master-Key kompromittiert wird, könnte ein Angreifer auch 
+  [cite_start]alle aufgezeichneten vergangenen Sitzungen entschlüsseln[cite: 3536].
+- PFS Definition: Ein Kompromittieren des Master-Keys darf nur zukünftige, aber 
+  [cite_start]keine vergangenen Sitzungen gefährden[cite: 3543].
+- Umsetzung: Nutzung von temporären, zufälligen Session-Keys (z.B. durch 
+  [cite_start]Diffie-Hellman), die nach der Sitzung gelöscht werden[cite: 3552].
+
+4. TRANSPORT LAYER SECURITY (TLS)
+---------------------------------
+[cite_start]TLS sichert die Kommunikation direkt oberhalb von TCP (Layer 3/4)[cite: 3588]. 
+Es besteht aus zwei Hauptteilen:
+
+A) TLS Handshake Protocol:
+- [cite_start]Aushandlung von Algorithmen und Parametern (ClientHello, ServerHello)[cite: 3616].
+- [cite_start]Authentifizierung (Zertifikate) und Schlüsselaustausch[cite: 3620].
+- [cite_start]Generierung des "Master Secret"[cite: 3621].
+- Schutz vor Downgrade-Attacken durch Überprüfung der Integrität des Handshakes 
+  (Finish Message) [cite_start][cite: 3723].
+
+B) TLS Record Protocol:
+- [cite_start]Überträgt die eigentlichen Daten verschlüsselt[cite: 3606].
+
+Wichtige Anmerkungen:
+- SSL 2.0 ist unsicher und sollte nicht mehr genutzt werden (Schwache MACs, 
+  [cite_start]kein Handshake-Schutz)[cite: 3730, 3733].
+- StartTLS: Erlaubt das "Upgrade" einer bestehenden unsicheren Verbindung 
+  (z.B. bei SMTP) [cite_start]auf TLS[cite: 3740].
+
+5. DNS SECURITY (DNSSEC & DANE)
+-------------------------------
+- DNSSEC: Fügt dem DNS-System digitale Signaturen hinzu (RRSIG Records), um die 
+  [cite_start]Echtheit von DNS-Antworten zu garantieren[cite: 3796, 3798].
+- DANE (RFC 6698): Bindet X.509-Zertifikate an DNS-Einträge (TLSA Records). 
+  Dies erlaubt eine Zertifikatsprüfung über DNSSEC statt (oder ergänzend zu) 
+  [cite_start]klassischen PKI-Infrastrukturen[cite: 3818, 3823].
+
+6. E-MAIL SICHERHEIT
+--------------------
+SMTP (Simple Mail Transfer Protocol) bietet standardmäßig keine Sicherheit 
+(weder Verschlüsselung noch Authentifizierung)[cite_start], was Spam und Phishing begünstigt[cite: 3835].
+
+Gegenmaßnahmen:
+- SPF (Sender Policy Framework): Im DNS wird hinterlegt, welche IP-Adressen 
+  [cite_start]Mails für eine Domain versenden dürfen[cite: 3849].
+- DKIM (DomainKeys Identified Mail): Die sendende Domain signiert Mails 
+  [cite_start]kryptographisch; der öffentliche Schlüssel liegt im DNS[cite: 3853].
+- DMARC: Baut auf SPF und DKIM auf. Es definiert Policies (z.B. "reject"), 
+  [cite_start]wie Empfänger mit Mails umgehen sollen, die SPF/DKIM nicht bestehen[cite: 3856].

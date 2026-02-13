@@ -1,0 +1,179 @@
+--------------------------------------------------------------------------------
+Authentifizierung
+--------------------------------------------------------------------------------
+
+1. [cite_start]GRUNDLAGEN DER AUTHENTIFIZIERUNG [cite: 1153-1178]
+------------------------------------------------------------------------------
+Authentifizierung ist der Beweis einer Identität. Man unterscheidet drei klassische 
+Faktoren (Authentication Classes):
+
+1. Knowledge (Wissen): Etwas, das man weiß (Passwort, PIN).
+2. Possession (Besitz): Etwas, das man hat (Schlüssel, Smartcard, Handy).
+3. Measurement/Biometry (Sein): Etwas, das man ist (Fingerabdruck, Iris).
+
+MFA (Multi-Factor Authentication):
+Die Kombination aus mindestens zwei dieser Klassen (z.B. Karte + PIN beim Geldautomaten). 
+Das ist sicherer, weil ein Angreifer zwei völlig verschiedene Hürden überwinden muss.
+
+2. [cite_start]PASSWÖRTER (KNOWLEDGE) & ANGRIFFE [cite: 1199-1286]
+--------------------------------------------------------------------------------
+Passwörter sind die häufigste Methode, aber anfällig, weil Sicherheit oft vom 
+Nutzerverhalten abhängt.
+
+Wie werden sie angegriffen?
+1. Brute-Force: Ausprobieren aller möglichen Zeichenkombinationen. Zeitaufwendig, 
+   aber garantiert erfolgreich bei genug Zeit.
+2. Dictionary Attack: Nutzen von Wortlisten (z.B. "rockyou.txt"). Menschen nutzen 
+   [cite_start]oft echte Wörter, daher geht das viel schneller als Brute-Force [cite: 1658-1661].
+3. [cite_start]Rainbow Tables (Time-Memory Tradeoff) [cite: 1773-1828]:
+   - Das Problem: Einen Hash zu knacken dauert lange.
+   - Die Lösung (für Angreifer): Man berechnet *vorher* gigantische Tabellen mit 
+     Milliarden von Passwörtern und deren Hashes (Precomputation).
+   - Der Angriff: Wenn man einen Hash klaut, schaut man einfach in der Tabelle nach, 
+     welches Passwort dazu gehört. Das Knacken dauert dann nur Millisekunden.
+
+[cite_start]Schutzmaßnahme: Salting [cite: 1607-1626]
+- Was ist das? Eine zufällige Zeichenfolge (Salt), die an das Passwort angehängt wird, 
+  *bevor* es gehasht wird.
+- Der Effekt: User A und User B haben beide das Passwort "geheim". Durch unterschiedliche 
+  Salts entstehen aber völlig verschiedene Hashes in der Datenbank.
+- Konsequenz: Rainbow Tables werden nutzlos, da der Angreifer für jeden individuellen 
+  Salt eine komplett neue Tabelle berechnen müsste (was zu lange dauert).
+
+3. [cite_start]BIOMETRIE (MEASUREMENT) [cite: 1899-1963]
+--------------------------------------------------------------------------------
+Hier werden menschliche Merkmale gemessen.
+- Physisch: Fingerabdruck, Iris, Gesicht.
+- Verhalten (Behavioral): Tipp-Rhythmus, Gangart, Unterschrift.
+
+Das Problem der Wahrscheinlichkeit:
+Biometrie ist nie 100% exakt (anders als ein Passwort). Es ist ein statistischer Test.
+Es gibt zwei Fehlerarten:
+1. False Negative (Type II): Der echte Nutzer wird abgelehnt (Schlecht für Usability).
+2. False Positive (Type I): Ein Fremder wird fälschlicherweise akzeptiert (Katastrophe für Sicherheit!).
+
+[DIAGRAMM: Binary Classification Errors]
+(Zeigt die Schnittmenge, wo das System sich irrt. Man muss über einen Threshold (Schwellenwert) 
+balancieren zwischen "zu streng" und "zu locker".)
+
+Großer Nachteil: Biometrische Merkmale können nicht geändert werden. Wenn dein 
+[cite_start]Fingerabdruck einmal kopiert/gestohlen wurde, ist er für immer "verbrannt" [cite: 1947-1948].
+
+4. [cite_start]TOKENS & ONE-TIME PASSWORDS (OTP) [cite: 1990-2052]
+--------------------------------------------------------------------------------
+Statt statischer Passwörter nutzen wir Einmal-Passwörter.
+
+[cite_start]A) HOTP (HMAC-based OTP) [cite: 1990-2019]
+- Basiert auf einem Zähler (Counter).
+- Ablauf: Server und Token starten bei Zähler 1. Knopfdruck -> Zähler 2 -> Neuer Code.
+- Problem: Wenn man den Knopf drückt, ohne sich einzuloggen, läuft der Token dem 
+  Server voraus (Desynchronisation). Der Server muss ein "Fenster" haben, um wieder aufzuholen.
+
+[cite_start]B) TOTP (Time-based OTP) [cite: 2022-2052]
+- Der Standard heute (Google Authenticator, Microsoft Auth).
+- Basiert auf der aktuellen Uhrzeit.
+- Formel: Zeitindex = (Aktuelle Zeit - Startzeit) / Zeitintervall (meist 30s).
+- Vorteil: Keine Desynchronisation durch "Rumspielen" am Token, da sich der Code 
+  automatisch alle 30 Sekunden erneuert.
+
+[DIAGRAMM: Time indices for TOTP]
+(Zeigt den Zeitstrahl, der in 30-Sekunden-Blöcke (T_X) unterteilt ist. Jeder Block ergibt einen neuen Code.)
+
+5. [cite_start]REMOTE AUTHENTICATION PROTOKOLLER [cite: 2095-2445]
+--------------------------------------------------------------------------------
+Wie authentifiziere ich mich sicher über ein Netzwerk?
+
+[cite_start]Challenge-Response Verfahren [cite: 2095-2123]:
+- Ziel: Das Passwort soll nicht über die Leitung gesendet werden.
+- Ablauf:
+  1. Server sendet eine Zufallszahl (Challenge/Nonce).
+  2. Client nimmt sein Passwort (Secret), verknüpft es mit der Challenge und berechnet 
+     einen Hash/Signatur.
+  3. Client sendet nur das Ergebnis (Response) zurück.
+  4. Server rechnet nach.
+- Vorteil: Abhören der Leitung bringt nichts, da die Challenge jedes Mal anders ist (Replay-Schutz).
+
+[cite_start]Session Management (Sitzungen) [cite: 2229-2428]:
+- HTTP ist zustandslos (vergisst alles nach jedem Klick).
+- Lösung: Nach dem Login erhält der User eine Session ID (meist als Cookie).
+- [cite_start]Gefahr: Session Fixation Attack [cite: 2243-2245].
+  - Angreifer besorgt sich eine gültige Session ID.
+  - Er jubelt diese ID dem Opfer unter (z.B. per Link).
+  - Opfer loggt sich ein -> Die ID wird "authentifiziert".
+  - Angreifer nutzt nun die gleiche ID, um als das Opfer zu surfen.
+- Schutz: Bei jedem Login muss zwingend eine *neue* Session ID generiert werden!
+
+[cite_start]JWT (JSON Web Token) [cite: 2432-2445]:
+- Ein modernes Token-Format, das alle Infos (Claims: User ID, Ablaufdatum) direkt enthält.
+- Das Token ist digital signiert. Der Server muss nichts speichern (stateless), er 
+  prüft nur die Signatur des Tokens.
+
+USER-SIDE PROTECTION
+– Wordlist enumeration
+– Modification Rules
+– Hash Calculation (optimized)
+– Rainbowtables
+• Do not reuse passwords
+• Password Manager
+• Two-Factor Authentication
+• One-Time Password (OTP)
+• Key Tokens / Hardware Authentication
+– Cryptographic SmartCards
+– YubiKey
+
+1. [cite_start]VERANTWORTUNG DES NUTZERS [cite: 181-190]
+--------------------------------------------------------------------------------
+Da Passwörter oft durch Nutzerfehler kompromittiert werden, gibt es klare 
+Pflichten:
+- Secrecy (Geheimhaltung): Niemals teilen ("A passphrase shared is a passphrase lost").
+- Availability (Verfügbarkeit): Nicht vergessen!
+- Awareness (Aufmerksamkeit): Wo tippe ich es ein? (Phishing erkennen).
+- Authenticity of Verifier: Prüfen, ob der Server echt ist (z.B. URL/Zertifikat).
+
+2. [cite_start]DAS "MAGISCHE DREIECK" DER PASSWORT-ERSTELLUNG [cite: 191-201]
+--------------------------------------------------------------------------------
+Ein ideales Passwort muss drei Anforderungen gleichzeitig erfüllen (was für 
+Menschen extrem schwer ist):
+1. Unguessable: Zufällig genug, um nicht erraten zu werden.
+2. Unobservable: Darf bei der Eingabe/Erstellung nicht beobachtet werden.
+3. Unforgetable: Muss merkbar sein (wenn man es tippen muss).
+
+Problem: Menschen sind schlecht darin, Zufall zu erzeugen, und vergessen 
+komplexe Zufallsstrings schnell.
+
+3. ERSTELLUNGS-METHODEN (GENERATION)
+--------------------------------------------------------------------------------
+[cite_start]A) Manuelle Methoden (Schlecht) [cite: 209-215]
+- Auf Tastatur hauen: Erzeugt Muster, die Angreifer kennen.
+- Ausdenken: Menschen nutzen unbewusst Muster und bekannte Wörter.
+
+[cite_start]B) Diceware (Gut & Klausurrelevant!) [cite: 260-277]
+- Konzept: Echter Zufall durch Würfeln, aber merkbar durch echte Wörter.
+- Ablauf:
+  1. Man würfelt 5-mal mit einem 6-seitigen Würfel (z.B. 1-4-3-5-2).
+  2. Man sucht diese Zahl in einer festen Wortliste (Wordlist).
+  3. Man erhält ein Wort (z.B. "Haus").
+  4. Wiederholen (empfohlen: mind. 6 Wörter).
+- Ergebnis: Ein Satz wie "Haus Reiten Farbe ..." – sehr hohe Entropie (Sicherheit), 
+  aber das Gehirn kann es sich als Geschichte merken.
+- Vorteil: Offline erstellt (kein Computer kann beim Erstellen mitlesen).
+
+[cite_start]C) Mentale Algorithmen [cite: 278-313]
+- Idee: Man merkt sich eine Regel, kein Passwort.
+- Beispiel: "Nimm den 3. Buchstaben der Domain und verschiebe ihn um 2".
+- Risiko: Wenn der Algorithmus bekannt wird, sind ALLE Accounts gleichzeitig unsicher.
+
+4. [cite_start]PASSWORD MANAGER [cite: 326-366]
+--------------------------------------------------------------------------------
+Die empfohlene Lösung für das Speicherproblem.
+- Prinzip: Eine verschlüsselte Datenbank speichert alle Logins. Der Nutzer muss 
+  sich nur EIN starkes Master-Passwort merken.
+- Funktionen:
+  - Generiert perfekte Zufallspasswörter (besser als jeder Mensch).
+  - Sync zwischen Geräten.
+  - Schutz vor Keyloggern (wenn Auto-Fill / Clipboard genutzt wird, statt zu tippen).
+
+[cite_start]Beispiele aus der Vorlesung [cite: 373-376]:
+- pass: Standard Unix-Tool, nutzt GPG zur Verschlüsselung, sehr minimalistisch (Command Line).
+- KeePass: Lokale Datei, Open Source.
+- Vaultwarden / Bitwarden: Client-Server basierend (Cloud oder Self-hosted).

@@ -1,0 +1,99 @@
+--------------------------------------------------------------------------------
+Zertifikate & PKI
+--------------------------------------------------------------------------------
+
+1. [cite_start]WAS SIND ZERTIFIKATE? [cite: 1740-1773]
+--------------------------------------------------------------------------------
+Grundproblem: Wie weiß ich, dass der Public Key wirklich Alice gehört?
+Lösung: Ein Zertifikat bindet eine Identität (z.B. Name, Domain) an einen 
+Public Key durch die digitale Unterschrift einer vertrauenswürdigen Stelle (Issuer).
+
+Aufbau (grob):
+- Attribute (Name, Email, Zweck)
+- Public Key (der eigentlich wichtige Teil)
+- Authority Signature (Beweis der Echtheit durch den Aussteller)
+
+[DIAGRAMM: Certificate Structure]
+(Zeigt: Attribute + Public Key werden zusammen von der Authority unterschrieben.)
+
+2. [cite_start]TRUST & VERTRAUENS-MODELLE [cite: 1787-1844]
+--------------------------------------------------------------------------------
+Trust Definition (Jøsang): Die Bereitschaft, sich auf jemanden zu verlassen, 
+obwohl negative Konsequenzen möglich sind.
+Wichtig:
+- Trust != Trustworthiness (Vertrauen ist subjektiv, Vertrauenswürdigkeit objektiv).
+- Trust Topology: Wie wird Vertrauen weitergegeben? (Transitive Trust: Ich vertraue A, 
+  A vertraut B -> Ich vertraue B).
+
+3. [cite_start]RECHTLICHER RAHMEN: eIDAS (EU) [cite: 1845-1907]
+--------------------------------------------------------------------------------
+Regelt elektronische Identifizierung und Vertrauensdienste in der EU (Nachfolger 
+vom Signaturgesetz).
+
+Drei Stufen der Signatur (Klausurrelevant!):
+1. Einfache elektronische Signatur: Daten, die anderen Daten beigefügt sind (z.B. Name unter Email).
+2. Fortgeschrittene (Advanced) Signatur:
+   - Eindeutig dem Unterzeichner zugeordnet.
+   - Ermöglicht Identifizierung.
+   - Unter alleiniger Kontrolle des Unterzeichners (Private Key).
+   - Nachträgliche Änderungen an Daten sind erkennbar (Integrität).
+3. Qualifizierte (Qualified) Signatur:
+   - Eine fortgeschrittene Signatur, die zusätzlich:
+   - Von einem qualifizierten Erstellungsgerät (Smartcard, etc.) erstellt wurde.
+   - Auf einem qualifizierten Zertifikat beruht (von geprüftem Provider).
+   - Rechtswirkung: Ersetzt die handschriftliche Unterschrift!
+
+4. [cite_start]OPENPGP & WEB-OF-TRUST (Dezentral) [cite: 1908-1979]
+--------------------------------------------------------------------------------
+Standard für Email-Verschlüsselung (RFC 9580).
+Modell: Web of Trust (WoT). Keine zentrale Behörde.
+- Jeder ist eine CA: Jeder kann Schlüssel anderer signieren ("Key Signing Party").
+- Vertrauens-Regeln (GnuPG):
+  - "Valid" (Gültig): Man hat den Key sicher (Signaturprüfung klappt).
+  - "Trusted" (Vertraut): Man vertraut dem Besitzer, dass er andere Keys ordentlich prüft.
+  - Stufen: Unknown, Marginal (braucht mehrere Bürgen), Complete (reicht alleine), Ultimate (eigener Key).
+
+5. [cite_start]X.509 & PKI (Zentral / Hierarchisch) [cite: 1980-2111]
+--------------------------------------------------------------------------------
+Der Standard für TLS/SSL (HTTPS). Streng hierarchisch.
+
+[cite_start]X.509 Struktur [cite: 2045-2061]:
+- Version, Serial Number
+- Issuer (Aussteller)
+- Validity (Not Before / Not After) -> Wichtig: Zertifikate laufen ab!
+- Subject (Inhaber, Identifiziert durch "Distinguished Names" wie C=DE, O=Firma, CN=Domain)
+- Subject Public Key Info (Der eigentliche Key)
+- Extensions (z.B. Key Usage: Darf dieser Key signieren oder nur verschlüsseln?)
+
+PKI (Public Key Infrastructure):
+Die Hierarchie dahinter.
+- Root CA: Die Wurzel allen Vertrauens (im Browser/OS vorinstalliert). Signiert sich selbst.
+- Intermediate CA: Von Root signiert, signiert End-User-Zertifikate.
+- RA (Registration Authority): Prüft den Ausweis/Identität, stellt aber kein Zertifikat aus (das macht die CA).
+- VA (Validation Authority): Prüft Gültigkeit.
+
+[DIAGRAMM: Tree of Certificates]
+(Zeigt Baumstruktur: Root CA -> Sub CA -> User Certs)
+
+6. [cite_start]REVOCATION (Widerruf) [cite: 2136-2150]
+--------------------------------------------------------------------------------
+Was, wenn ein Private Key geklaut wird? Das Zertifikat muss vor Ablauf ungültig werden.
+Methoden:
+1. CRL (Certificate Revocation List): Blacklist aller gesperrten Zertifikate.
+   - Nachteil: Wird riesig, langsam, "Blacklist-basiert" (unsicher wenn Liste veraltet).
+2. Gründe für Widerruf: Key Compromise (Schlüssel geklaut), CA Compromise (Super-GAU), Privilege Withdrawn.
+
+7. [cite_start]AUTOMATISIERUNG: ACME & LET'S ENCRYPT [cite: 2170-2212]
+--------------------------------------------------------------------------------
+Problem früher: Zertifikate waren teuer und manuell.
+Lösung: Let's Encrypt (kostenlos, automatisiert).
+Protokoll: ACME (Automated Certificate Management Environment).
+
+Ablauf (Challenge-Response):
+1. User (Server) fordert Zertifikat für "example.com".
+2. ACME-Server stellt "Challenge" (Aufgabe):
+   - HTTP-01: "Leg Datei X mit Inhalt Y auf deinen Webserver."
+   - DNS-01: "Schreib Token Z in deinen DNS TXT Record."
+3. User erfüllt Aufgabe.
+4. ACME-Server prüft das (ruft URL/DNS ab).
+5. Wenn OK: Beweis erbracht, dass User Kontrolle über Domain hat -> Zertifikat wird ausgestellt.

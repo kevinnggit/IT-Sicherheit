@@ -1,0 +1,102 @@
+PRIVACY
+=======================================================
+
+1. GRUNDLAGEN & DEFINITIONEN VON PRIVACY
+----------------------------------------
+Der Begriff "Privacy" (Privatsphäre) ist komplex und hat sich über die Zeit gewandelt:
+
+Paradigmen:
+- Privacy as Confidentiality: "Geheimhaltung der Daten". (Gilt heute als veraltet, 
+  da Metadaten oft genauso viel verraten wie der Inhalt).
+- Privacy as Control: "Kontrolle darüber, wer was sieht". (Das dominierende Paradigma 
+  für Technologien wie Tor oder Mix-Netzwerke).
+- Privacy as Practise: Technischer Schutz reicht nicht, das Nutzerverhalten muss sich ändern.
+
+Rechtliche & Soziale Aspekte:
+- "Right to be left alone" (Warren/Brandeis, 1890).
+- Informationelle Selbstbestimmung: Deutsches Grundrecht (basierend auf dem 
+  Volkszählungsurteil 1983). Jeder muss grundsätzlich selbst über die Preisgabe 
+  seiner Daten bestimmen können.
+- DSGVO (GDPR): Regelt Datenerhebung in der EU. Wichtige Prinzipien: 
+  Rechtmäßigkeit, Transparenz, Zweckbindung, Datenminimierung ("Speicherbegrenzung"), 
+  Integrität und Vertraulichkeit.
+
+2. TECHNISCHE BEGRIFFE
+----------------------
+- Identifier: Ein Attribut, das eine Entität eindeutig identifiziert (z.B. Ausweisnummer).
+- Quasi-Identifier: Attribute, die für sich genommen nicht eindeutig sind, aber in 
+  Kombination eine Person identifizierbar machen (z.B. PLZ + Geburtsdatum + Geschlecht).
+- Anonymität: Ein Subjekt ist innerhalb einer Menge von Subjekten (Anonymity Set) 
+  nicht identifizierbar.
+- Unlinkability (Unverkettbarkeit): Ein Angreifer kann nicht feststellen, ob zwei 
+  Aktionen (z.B. Nachrichten) zusammengehören oder vom selben Ursprung sind.
+- Undetectability/Unobservability: Die Existenz der Kommunikation selbst ist verborgen.
+
+3. MODELLE & METRIKEN
+---------------------
+Um Anonymität messbar zu machen, werden verschiedene Modelle genutzt:
+
+- Anonymity Set: Die Größe der Gruppe, in der man sich versteckt ("Dining Cryptographers").
+- MIX-Modell: Nachrichten durchlaufen Knoten, die die Reihenfolge ändern (Shuffling/Delay), 
+  um Eingangs- und Ausgangsnachrichten unverkettbar zu machen.
+- Entropie & "Degree of Anonymity": Messen nicht nur die Anzahl der Nutzer, sondern auch 
+  die Wahrscheinlichkeitsverteilung (Unsicherheit des Angreifers). Wenn ein Angreifer 
+  weiß, dass Alice zu 90% der Täter ist, hilft auch ein großes Anonymity Set wenig.
+
+4. PRIVACY IM INTERNET (MIX-NETZWERKE & TOR)
+--------------------------------------------
+- Mix-Netzwerke: Overlay-Netzwerke, die Metadaten verschleiern.
+- Tor (The Onion Router):
+  - Baut einen Circuit über 3 Hops (Relays) auf.
+  - Zwiebelschalen-Verschlüsselung (Layered Encryption): Jeder Knoten kennt nur seinen 
+    Vorgänger und Nachfolger, nie den gesamten Pfad.
+  - Schwäche: Tor schützt nicht gegen einen "Global Passive Observer" (jemand, der das 
+    gesamte Internet überwacht) oder wenn der Nutzer sich auf Applikationsebene verrät.
+- Browser Fingerprinting: Tracking über Merkmale wie installierte Fonts, Bildschirmauflösung, 
+  User-Agent oder HTTP-Header, ganz ohne Cookies.
+
+5. DATENBANK-PRIVACY
+--------------------
+Wie veröffentlicht man Daten für Statistiken, ohne Individuen zu gefährden?
+
+Ansätze für relationale Datenbanken:
+- k-anonymity: Jeder Eintrag muss in einer Gruppe von mindestens k Einträgen ununterscheidbar 
+  sein (bezogen auf Quasi-Identifier).
+- l-diversity: In jeder k-Gruppe müssen mindestens l verschiedene Werte für sensitive 
+  Attribute (z.B. Krankheiten) vorkommen.
+- t-closeness: Die Verteilung der sensitiven Werte in der Gruppe muss der Gesamtverteilung ähneln.
+
+Differential Privacy (Statistische Datenbanken):
+- Ein sehr starkes mathematisches Konzept.
+- Ziel: Das Ergebnis einer Abfrage darf sich kaum verändern, egal ob eine einzelne Person 
+  in der Datenbank enthalten ist oder nicht.
+- Methode: Hinzufügen von "Rauschen" (Noise) auf das Ergebnis (oft Laplace-Verteilung). 
+  Dies verhindert, dass Angreifer durch geschickte Abfragen Rückschlüsse auf Einzelpersonen ziehen.
+
+6. OSN (ONLINE SOCIAL NETWORKS)
+-------------------------------
+- Profile Obfuscation: Strategien zur Verschleierung in sozialen Netzen, z.B. durch 
+  falsche Angaben (Fake Attributes) oder das willkürliche Annehmen von Freundschaftsanfragen, 
+  um den "Social Graph" zu verfälschen und Analyse-Algorithmen in die Irre zu führen.
+
+  Laut den vorliegenden notizen (Lecture_Notes_09.pdf) werden die grundlegenden prinzipien und regeln der DSGVO (Datenschutz-Grundverordnung) direkt auf seite 7 und 8 aufgelistet.
+
+Hier sind die prinzipien, so wie sie im skript stehen:
+
+    Rechtmäßigkeit: Du darfst daten nur verarbeiten, wenn es ein gesetz erlaubt. Das skript verweist hier speziell auf Artikel 6, der bedingungen nennt (wie einwilligung, vertragserfüllung, rechtliche verpflichtung etc.) .
+
+    Treu und Glauben: Das bedeutet, man soll sich an die "verkehrssitte" halten, also zuverlässig, aufrichtig und rücksichtsvoll mit den daten umgehen.
+
+    Transparenz: Alles muss für den betroffenen nachvollziehbar und offen sein. Die informationen müssen "leicht zugänglich" und in "einfacher sprache" sein, nicht versteckt .
+
+    Zweckbindung: Daten dürfen nur für den zweck genutzt werden, für den sie ursprünglich erhoben wurden.
+
+    Datenminimierung: Sammle so wenig daten wie möglich.
+
+    Richtigkeit: Die gespeicherten daten müssen korrekt sein.
+
+    Speicherbegrenzung: Daten dürfen nicht ewig behalten werden (löschfristen).
+
+    Integrität und Vertraulichkeit: Die daten müssen sicher vor unbefugtem zugriff oder veränderung geschützt werden.
+
+    Rechenschaftspflicht: Der verantwortliche muss nachweisen können, dass er sich an diese regeln hält.

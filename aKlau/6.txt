@@ -1,0 +1,58 @@
+ACCESS CONTROL
+
+1. EINFÜHRUNG IN DIE ZUGRIFFSKONTROLLE
+Zugriffskontrolle (Access Control) erlaubt oder verweigert den Zugriff auf Ressourcen durch ein Subjekt (Principal) in einer definierten Art und Weise[cite: 41]. 
+Kernkomponenten eines Systems sind:
+- Authentifizierung: Feststellung der Identität des Subjekts[cite: 42, 51].
+- Zugriffskontrollfunktion: Entscheidung über Zulässigkeit basierend auf der Autorisierungsdatenbank[cite: 52].
+- Autorisierungsdatenbank: Implementierung des zugrunde liegenden Modells[cite: 54].
+- Audit: Überwachung und Protokollierung aller Zugriffe[cite: 53].
+
+2. ARCHITEKTUR-FRAMEWORK (XACML / RFC 2904)
+Ein modernes Framework zur Attribut-basierten Autorisierung nutzt folgende Punkte[cite: 56, 59]:
+- PEP (Policy Enforcement Point): Fängt Anfragen ab und setzt Entscheidungen durch[cite: 76].
+- PDP (Policy Decision Point): Bewertet Anfragen gegen die geltenden Richtlinien[cite: 75].
+- PAP (Policy Administration Point): Verwalte die Autorisierungs-Policies[cite: 74].
+- PIP (Policy Information Point): Quelle für Attributwerte (Subjekt, Umgebung)[cite: 77].
+- PRP (Policy Retrieval Point): Speicherort der Policies[cite: 78].
+
+3. DISCRETIONARY ACCESS CONTROL (DAC)
+DAC bedeutet "Ermessens-basierte Zugriffskontrolle"[cite: 80]. Der Besitzer einer Ressource bestimmt, wer darauf zugreifen darf.
+
+3.1 Access Control Matrix (ACM)
+Abstraktes Modell, bestehend aus einer Liste aller Subjekte (Zeilen) und Objekte (Spalten)[cite: 114].
+- Felder enthalten die Zugriffsrechte (z.B. r, w, x)[cite: 115, 121].
+- Probleme: Sehr speicherintensiv bei vielen Nutzern/Objekten (Sparse Matrix) und komplex beim Nachschlagen[cite: 185, 189].
+
+3.2 Implementierungen von ACM
+- Capability Lists (CL): Zeilenweise Speicherung. Jedes Subjekt führt eine Liste seiner Rechte ("Tickets")[cite: 194, 203]. Problem: Schwer zu widerrufen (Revocation)[cite: 213].
+- Access Control Lists (ACL): Spaltenweise Speicherung. Jedes Objekt führt eine Liste der berechtigten Subjekte[cite: 198, 225].
+- Unix-Modell: Ein hybrider Ansatz. Dateisystem nutzt ACLs (Besitzer, Gruppe, Welt)[cite: 238, 243]. Beim Öffnen einer Datei erhält der Prozess einen Dateideskriptor, der als temporäre Capability fungiert[cite: 239, 240].
+
+4. MANDATORY ACCESS CONTROL (MAC)
+Systemweite Regeln, die weder von Benutzern noch von Administratoren geändert werden können[cite: 262]. Fokus liegt auf dem Informationsfluss[cite: 263].
+
+4.1 Bell-LaPadula (Vertraulichkeitsmodell)
+Verhindert den Informationsfluss von oben nach unten (Geheimhaltung)[cite: 265, 284].
+- Simple Security Property (no-read-up): Subjekte dürfen keine Objekte einer höheren Sicherheitsstufe lesen[cite: 285].
+- *-Property (no-write-down): Subjekte dürfen nicht in Objekte einer niedrigeren Stufe schreiben[cite: 286].
+- Probleme: "Blindes Schreiben" nach oben möglich, geringer Integritätsschutz[cite: 306, 308].
+
+5. ROLE-BASED ACCESS CONTROL (RBAC)
+Rechte werden an Rollen (Job-Funktionen) vergeben, nicht an einzelne Subjekte[cite: 82, 332].
+- Reduziert die Komplexität bei großen Organisationen massiv[cite: 331, 334].
+- Komponenten: User, Role, Permissions, Session[cite: 336, 337, 338, 339].
+- Constraints (Beschränkungen): 
+  - Statisch: Rollen dürfen nicht derselben Person zugewiesen sein (z.B. Präsident und Richter)[cite: 341, 380].
+  - Dynamisch: Rollen dürfen nicht gleichzeitig in einer Session aktiv sein[cite: 340, 371].
+
+6. STANDORTBASIERTE AUTORISIERUNG
+Zugriff hängt von der physischen Position ab[cite: 382, 387].
+- Anforderungen: Authentizität, Aktualität (Freshness gegen Replay-Attacks), räumliche Nähe und Unlinkability (Privatsphäre)[cite: 394, 396, 399, 407].
+- Lösungen: Kryptographische Challenges am Objekt (z.B. QR-Code) oder lokales WLAN-Polling[cite: 423, 427].
+
+7. SELINUX (SECURITY ENHANCED LINUX)
+Erweiterung des Linux-Kernels um MAC und RBAC[cite: 431, 434].
+- Jeder Prozess und jedes Objekt besitzt einen Security Context: user:role:type[cite: 476, 490].
+- Das wichtigste Feld für die RBAC-Autorisierung ist das "Type"-Feld (Type Enforcement)[cite: 491].
+- Regeln definieren explizit erlaubte Zugriffe, z.B.: allow user_t bin_t:file read;[cite: 489].
