@@ -1,0 +1,10 @@
+
+Starte Scan im Netz 10.42.10.0/24...
+Host gefunden: 10.42.10.10
+Host gefunden: 10.42.10.12
+Host gefunden: 10.42.10.101
+
+Starte Scan im Netz 10.42.10.0/24...
+Host gefunden: 10.42.10.10
+Host gefunden: 10.42.10.12
+Host gefunden: 10.42.10.101

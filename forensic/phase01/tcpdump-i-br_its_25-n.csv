@@ -1,0 +1,136 @@
+18:49:38.037800 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 1537529402:1537529510, ack 2228091302, win 501, options [nop,nop,TS val 2808659864 ecr 2325359437], length 108
+18:49:38.037927 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 108:144, ack 1, win 501, options [nop,nop,TS val 2808659864 ecr 2325359437], length 36
+18:49:38.037956 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 144:204, ack 1, win 501, options [nop,nop,TS val 2808659864 ecr 2325359437], length 60
+18:49:38.038029 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 204:272, ack 1, win 501, options [nop,nop,TS val 2808659864 ecr 2325359437], length 68
+18:49:38.038103 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 272:340, ack 1, win 501, options [nop,nop,TS val 2808659864 ecr 2325359437], length 68
+18:49:38.038172 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 340:376, ack 1, win 501, options [nop,nop,TS val 2808659864 ecr 2325359437], length 36
+18:49:38.078416 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 340:376, ack 1, win 501, options [nop,nop,TS val 2808659905 ecr 2325359437], length 36
+18:49:38.091980 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 108, win 65, options [nop,nop,TS val 2325359511 ecr 2808659864], length 0
+18:49:38.091981 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 144, win 65, options [nop,nop,TS val 2325359511 ecr 2808659864], length 0
+18:49:38.091981 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 204, win 65, options [nop,nop,TS val 2325359511 ecr 2808659864], length 0
+18:49:38.091982 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 272, win 65, options [nop,nop,TS val 2325359511 ecr 2808659864], length 0
+18:49:38.091982 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 340, win 65, options [nop,nop,TS val 2325359511 ecr 2808659864], length 0
+18:49:38.091983 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 376, win 65, options [nop,nop,TS val 2325359511 ecr 2808659864], length 0
+18:49:38.091984 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 376, win 65, options [nop,nop,TS val 2325359511 ecr 2808659905,nop,nop,sack 1 {340:376}], length 0
+18:49:41.717393 IP 10.42.2.135.44170 > 10.42.2.112.22: Flags [F.], seq 159212274, ack 2919004772, win 502, options [nop,nop,TS val 535051731 ecr 2292608948], length 0
+18:49:41.718508 IP 10.42.2.112.22 > 10.42.2.135.44170: Flags [F.], seq 1, ack 1, win 509, options [nop,nop,TS val 2292612953 ecr 535051731], length 0
+18:49:41.718726 IP 10.42.2.135.44170 > 10.42.2.112.22: Flags [.], ack 2, win 502, options [nop,nop,TS val 535051733 ecr 2292612953], length 0
+18:49:43.169785 ARP, Request who-has 10.42.2.112 tell 10.42.2.1, length 28
+18:49:43.169804 ARP, Reply 10.42.2.112 is-at 52:54:00:b7:c1:18, length 28
+18:49:50.845331 IP 10.42.2.131 > 10.42.2.112: ICMP echo request, id 8989, seq 1, length 64
+18:49:50.845364 IP 10.42.2.112 > 10.42.2.131: ICMP echo reply, id 8989, seq 1, length 64
+18:49:50.854057 IP 10.42.2.131.58733 > 10.42.2.112.31337: UDP, length 16
+18:49:50.854083 IP 10.42.2.112 > 10.42.2.131: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:49:50.865903 IP 10.42.2.131.50740 > 10.42.2.112.6290: Flags [S], seq 1860791066, win 64240, options [mss 1460,sackOK,TS val 1960469410 ecr 0,nop,wscale 7], length 0
+18:49:50.865922 IP 10.42.2.112.6290 > 10.42.2.131.50740: Flags [R.], seq 0, ack 1860791067, win 0, length 0
+18:49:58.266725 IP 10.42.2.135 > 10.42.2.112: ICMP echo request, id 59149, seq 1, length 64
+18:49:58.266761 IP 10.42.2.112 > 10.42.2.135: ICMP echo reply, id 59149, seq 1, length 64
+18:49:58.275141 IP 10.42.2.135.44119 > 10.42.2.112.31337: UDP, length 16
+18:49:58.275175 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:49:58.286751 IP 10.42.2.135.49728 > 10.42.2.112.6000: Flags [S], seq 2436844896, win 64240, options [mss 1460,sackOK,TS val 535068301 ecr 0,nop,wscale 7], length 0
+18:49:58.286778 IP 10.42.2.112.6000 > 10.42.2.135.49728: Flags [R.], seq 0, ack 2436844897, win 0, length 0
+18:50:12.611138 IP 10.42.2.131 > 10.42.2.112: ICMP echo request, id 9967, seq 1, length 64
+18:50:12.611174 IP 10.42.2.112 > 10.42.2.131: ICMP echo reply, id 9967, seq 1, length 64
+18:50:12.619394 IP 10.42.2.131.36930 > 10.42.2.112.31337: UDP, length 16
+18:50:12.619420 IP 10.42.2.112 > 10.42.2.131: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:50:12.631248 IP 10.42.2.131.37550 > 10.42.2.112.6500: Flags [S], seq 2465932006, win 64240, options [mss 1460,sackOK,TS val 1960491176 ecr 0,nop,wscale 7], length 0
+18:50:12.631267 IP 10.42.2.112.6500 > 10.42.2.131.37550: Flags [R.], seq 0, ack 2465932007, win 0, length 0
+18:50:15.665363 IP 10.42.2.135 > 10.42.2.112: ICMP echo request, id 60169, seq 1, length 64
+18:50:15.665398 IP 10.42.2.112 > 10.42.2.135: ICMP echo reply, id 60169, seq 1, length 64
+18:50:15.673987 IP 10.42.2.135.55264 > 10.42.2.112.31337: UDP, length 16
+18:50:15.674015 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:50:15.685885 IP 10.42.2.135.56246 > 10.42.2.112.6500: Flags [S], seq 1088857292, win 64240, options [mss 1460,sackOK,TS val 535085700 ecr 0,nop,wscale 7], length 0
+18:50:15.685913 IP 10.42.2.112.6500 > 10.42.2.135.56246: Flags [R.], seq 0, ack 1088857293, win 0, length 0
+18:50:17.772490 ARP, Request who-has 10.42.2.112 tell 10.42.2.131, length 28
+18:50:17.772509 ARP, Reply 10.42.2.112 is-at 52:54:00:b7:c1:18, length 28
+18:50:17.838461 ARP, Request who-has 10.42.2.131 tell 10.42.2.112, length 28
+18:50:17.838706 ARP, Reply 10.42.2.131 is-at 52:54:00:0c:26:99, length 28
+18:50:20.751280 ARP, Request who-has 10.42.2.112 tell 10.42.2.135, length 28
+18:50:20.751314 ARP, Reply 10.42.2.112 is-at 52:54:00:b7:c1:18, length 28
+
+18:51:14.445724 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 1537569502:1537569610, ack 2228103730, win 501, options [nop,nop,TS val 2808756272 ecr 2325455849], length 108
+18:51:14.445885 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 108:204, ack 1, win 501, options [nop,nop,TS val 2808756272 ecr 2325455849], length 96
+18:51:14.445940 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 204:272, ack 1, win 501, options [nop,nop,TS val 2808756272 ecr 2325455849], length 68
+18:51:14.445974 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 272:340, ack 1, win 501, options [nop,nop,TS val 2808756272 ecr 2325455849], length 68
+18:51:14.446069 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 340:376, ack 1, win 501, options [nop,nop,TS val 2808756272 ecr 2325455849], length 36
+18:51:14.558414 IP 10.42.2.112.22 > 10.125.2.22.38392: Flags [P.], seq 340:376, ack 1, win 501, options [nop,nop,TS val 2808756385 ecr 2325455849], length 36
+18:51:14.562054 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 376, win 65, options [nop,nop,TS val 2325455972 ecr 2808756272], length 0
+18:51:14.571016 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 376, win 65, options [nop,nop,TS val 2325455981 ecr 2808756385,nop,nop,sack 1 {340:376}], length 0
+18:51:16.355112 IP 10.42.2.131 > 10.42.2.112: ICMP echo request, id 14302, seq 1, length 64
+18:51:16.355221 IP 10.42.2.112 > 10.42.2.131: ICMP echo reply, id 14302, seq 1, length 64
+18:51:16.363940 IP 10.42.2.131.53573 > 10.42.2.112.31337: UDP, length 16
+18:51:16.363992 IP 10.42.2.112 > 10.42.2.131: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:51:16.375637 IP 10.42.2.131.38562 > 10.42.2.112.6290: Flags [S], seq 2512173185, win 64240, options [mss 1460,sackOK,TS val 1960554920 ecr 0,nop,wscale 7], length 0
+18:51:16.375672 IP 10.42.2.112.6290 > 10.42.2.131.38562: Flags [R.], seq 0, ack 2512173186, win 0, length 0
+18:51:24.347633 IP 10.42.2.135 > 10.42.2.112: ICMP echo request, id 64417, seq 1, length 64
+18:51:24.347673 IP 10.42.2.112 > 10.42.2.135: ICMP echo reply, id 64417, seq 1, length 64
+18:51:24.356481 IP 10.42.2.135.57694 > 10.42.2.112.31337: UDP, length 16
+18:51:24.356508 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:51:24.368798 IP 10.42.2.135.54122 > 10.42.2.112.80: Flags [S], seq 3754976696, win 64240, options [mss 1460,sackOK,TS val 535154383 ecr 0,nop,wscale 7], length 0
+18:51:24.368819 IP 10.42.2.112.80 > 10.42.2.135.54122: Flags [R.], seq 0, ack 3754976697, win 0, length 0
+18:51:29.355379 ARP, Request who-has 10.42.2.112 tell 10.42.2.135, length 28
+18:51:29.355435 ARP, Reply 10.42.2.112 is-at 52:54:00:b7:c1:18, length 28
+18:51:29.518432 ARP, Request who-has 10.42.2.135 tell 10.42.2.112, length 28
+18:51:29.518717 ARP, Reply 10.42.2.135 is-at 52:54:00:b6:82:c8, length 28
+18:51:37.738727 IP 10.42.2.131 > 10.42.2.112: ICMP echo request, id 15355, seq 1, length 64
+18:51:37.738762 IP 10.42.2.112 > 10.42.2.131: ICMP echo reply, id 15355, seq 1, length 64
+18:51:37.747470 IP 10.42.2.131.49175 > 10.42.2.112.31337: UDP, length 16
+18:51:37.747496 IP 10.42.2.112 > 10.42.2.131: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:51:37.759080 IP 10.42.2.131.34792 > 10.42.2.112.6290: Flags [S], seq 2812689508, win 64240, options [mss 1460,sackOK,TS val 1960576303 ecr 0,nop,wscale 7], length 0
+18:51:37.759100 IP 10.42.2.112.6290 > 10.42.2.131.34792: Flags [R.], seq 0, ack 2812689509, win 0, length 0
+18:51:42.764506 ARP, Request who-has 10.42.2.112 tell 10.42.2.131, length 28
+18:51:42.764524 ARP, Reply 10.42.2.112 is-at 52:54:00:b7:c1:18, length 28
+18:51:45.534076 IP 10.42.2.135 > 10.42.2.112: ICMP echo request, id 65515, seq 1, length 64
+18:51:45.534108 IP 10.42.2.112 > 10.42.2.135: ICMP echo reply, id 65515, seq 1, length 64
+18:51:45.542460 IP 10.42.2.135.43088 > 10.42.2.112.31337: UDP, length 16
+18:51:45.542487 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:51:45.554010 IP 10.42.2.135.56296 > 10.42.2.112.443: Flags [S], seq 2721960606, win 64240, options [mss 1460,sackOK,TS val 535175568 ecr 0,nop,wscale 7], length 0
+18:51:45.554030 IP 10.42.2.112.443 > 10.42.2.135.56296: Flags [R.], seq 0, ack 2721960607, win 0, length 0
+18:51:59.693544 IP 10.42.2.131 > 10.42.2.112: ICMP echo request, id 16442, seq 1, length 64
+18:51:59.693580 IP 10.42.2.112 > 10.42.2.131: ICMP echo reply, id 16442, seq 1, length 64
+18:51:59.701869 IP 10.42.2.131.39917 > 10.42.2.112.31337: UDP, length 16
+18:51:59.701896 IP 10.42.2.112 > 10.42.2.131: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:51:59.713456 IP 10.42.2.131.52874 > 10.42.2.112.6290: Flags [S], seq 1357551040, win 64240, options [mss 1460,sackOK,TS val 1960598258 ecr 0,nop,wscale 7], length 0
+18:51:59.713476 IP 10.42.2.112.6290 > 10.42.2.131.52874: Flags [R.], seq 0, ack 1357551041, win 0, length 0
+18:52:04.846429 ARP, Request who-has 10.42.2.131 tell 10.42.2.112, length 28
+18:52:04.846695 ARP, Reply 10.42.2.131 is-at 52:54:00:0c:26:99, length 28
+18:52:06.915059 IP 10.42.2.135 > 10.42.2.112: ICMP echo request, id 1078, seq 1, length 64
+18:52:06.915092 IP 10.42.2.112 > 10.42.2.135: ICMP echo reply, id 1078, seq 1, length 64
+18:52:06.923669 IP 10.42.2.135.40337 > 10.42.2.112.31337: UDP, length 16
+18:52:06.923706 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:52:06.935512 IP 10.42.2.135.39612 > 10.42.2.112.6000: Flags [S], seq 1312263806, win 64240, options [mss 1460,sackOK,TS val 535196950 ecr 0,nop,wscale 7], length 0
+18:52:06.935531 IP 10.42.2.112.6000 > 10.42.2.135.39612: Flags [R.], seq 0, ack 1312263807, win 0, length 0
+18:52:12.107391 ARP, Request who-has 10.42.2.112 tell 10.42.2.135, length 28
+18:52:12.107429 ARP, Reply 10.42.2.112 is-at 52:54:00:b7:c1:18, length 28
+18:52:17.067000 IP 10.42.2.131 > 10.42.2.112: ICMP echo request, id 17503, seq 1, length 64
+18:52:17.067034 IP 10.42.2.112 > 10.42.2.131: ICMP echo reply, id 17503, seq 1, length 64
+18:52:17.075184 IP 10.42.2.131.42580 > 10.42.2.112.31337: UDP, length 16
+18:52:17.075210 IP 10.42.2.112 > 10.42.2.131: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:52:17.086680 IP 10.42.2.131.38238 > 10.42.2.112.443: Flags [S], seq 1704544659, win 64240, options [mss 1460,sackOK,TS val 1960615631 ecr 0,nop,wscale 7], length 0
+18:52:17.086700 IP 10.42.2.112.443 > 10.42.2.131.38238: Flags [R.], seq 0, ack 1704544660, win 0, length 0
+18:52:22.188488 ARP, Request who-has 10.42.2.112 tell 10.42.2.131, length 28
+18:52:22.188507 ARP, Reply 10.42.2.112 is-at 52:54:00:b7:c1:18, length 28
+18:52:29.263032 IP6 fe80::5054:ff:fef3:9e29 > ff02::2: ICMP6, router solicitation, length 16
+18:52:29.291769 IP 10.42.2.135 > 10.42.2.112: ICMP echo request, id 2103, seq 1, length 64
+18:52:29.291813 IP 10.42.2.112 > 10.42.2.135: ICMP echo reply, id 2103, seq 1, length 64
+18:52:29.300317 IP 10.42.2.135.47076 > 10.42.2.112.31337: UDP, length 16
+18:52:29.300346 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:52:29.312277 IP 10.42.2.135.52174 > 10.42.2.112.6290: Flags [S], seq 3848769944, win 64240, options [mss 1460,sackOK,TS val 535219326 ecr 0,nop,wscale 7], length 0
+18:52:29.312297 IP 10.42.2.112.6290 > 10.42.2.135.52174: Flags [R.], seq 0, ack 3848769945, win 0, length 0
+18:52:34.542391 ARP, Request who-has 10.42.2.135 tell 10.42.2.112, length 28
+18:52:34.542692 ARP, Reply 10.42.2.135 is-at 52:54:00:b6:82:c8, length 28
+18:52:34.617280 IP 10.42.2.131 > 10.42.2.112: ICMP echo request, id 18592, seq 1, length 64
+18:52:34.617310 IP 10.42.2.112 > 10.42.2.131: ICMP echo reply, id 18592, seq 1, length 64
+18:52:34.626328 IP 10.42.2.131.60520 > 10.42.2.112.31337: UDP, length 16
+18:52:34.626354 IP 10.42.2.112 > 10.42.2.131: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:52:34.637743 IP 10.42.2.131.47288 > 10.42.2.112.6000: Flags [S], seq 1766415824, win 64240, options [mss 1460,sackOK,TS val 1960633182 ecr 0,nop,wscale 7], length 0
+18:52:34.637763 IP 10.42.2.112.6000 > 10.42.2.131.47288: Flags [R.], seq 0, ack 1766415825, win 0, length 0
+18:52:47.086449 IP 10.42.2.135 > 10.42.2.112: ICMP echo request, id 3237, seq 1, length 64
+18:52:47.086482 IP 10.42.2.112 > 10.42.2.135: ICMP echo reply, id 3237, seq 1, length 64
+18:52:47.094626 IP 10.42.2.135.55114 > 10.42.2.112.31337: UDP, length 16
+18:52:47.094652 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+18:52:47.106321 IP 10.42.2.135.33394 > 10.42.2.112.6500: Flags [S], seq 2748132828, win 64240, options [mss 1460,sackOK,TS val 535237120 ecr 0,nop,wscale 7], length 0
+18:52:47.106341 IP 10.42.2.112.6500 > 10.42.2.135.33394: Flags [R.], seq 0, ack 2748132829, win 0, length 0
+18:52:52.299415 ARP, Request who-has 10.42.2.112 tell 10.42.2.135, length 28
+18:52:52.299434 ARP, Reply 10.42.2.112 is-at 52:54:00:b7:c1:18, length 28
+

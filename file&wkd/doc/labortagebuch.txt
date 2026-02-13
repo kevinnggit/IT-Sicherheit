@@ -1,0 +1,154 @@
+Labortagebuch Team 12 - Aufgabe 05
+----------------------------------
+
+15.01.2026T22:10 - Refactoring
+- Die alte Klasse `WKDServer.java` war zu monolithisch.
+- Neue Struktur angelegt: `handlers` für Web-Logik, `services` für Backend-Logik.
+- Problem gelöst: SessionManager muss Singleton sein, damit alle Handler auf dieselben Logins zugreifen können.
+- Implementierung der Singleton-Pattern in SessionManager und ChallengeManager.
+
+
+- MainServer geschrieben, der zwei HttpServer-Instanzen startet.
+- WKD auf Port 8080 gelegt.
+- Fileserver auf Port 80 gelegt.
+- Test: Port 80 benötigt Root-Rechte. Startskript muss sudo nutzen.
+
+- `register.html` erstellt mit DSGVO-Hinweisen (Art. 13 DSGVO).
+- `RegistrationHandler` implementiert für Pfad `/cgi/new`.
+- Sicherheitsmaßnahme: Whitelisting für Usernamen implementiert (nur a-z, 0-9, . -), um Directory Traversal Angriffe zu verhindern.
+- Test: Registrierung legt Datei im Root-Verzeichnis an. Datum und Teamname werden geschrieben.
+
+
+- Skripte (build.sh, install.sh, run.sh) erstellt.
+- README.md geschrieben.
+- Abschließender Test: Build läuft durch, Server startet, Registrierung funktioniert, Login bei bestehenden Usern funktioniert.
+- Qualitätssicherung abgeschlossen. Bereit zur Abgabe.
+
+
+team12/
+├── build.sh
+├── install.sh
+├── run.sh
+├── doc/
+│   ├── register.html
+│   ├── README.md
+│   └── labortagebuch
+└── src/
+    ├── MainServer.java
+    ├── handlers/
+    │   ├── FileHandler.java
+    │   ├── RegistrationHandler.java
+    │   ├── StaticFileHandler.java  <-- Code angepasst
+    │   └── WKDHandler.java
+    └── services/
+        ├── ChallengeManager.java
+        ├── GpgService.java
+        └── SessionManager.java
+
+1. Architektur & Design
+a) Modularisierung
+Wir haben uns von der monolithischen Struktur (WKDServer.java) gelöst und den Code in ein MVC-ähnliches Pattern (Model-View-Controller) refaktoriert.
+
+src/MainServer.java: Fungiert als Einstiegspunkt. Startet zwei unabhängige HTTP-Server-Instanzen.
+
+src/handlers/ (Controller): Enthält die Logik für HTTP-Anfragen (RegistrationHandler, FileHandler, StaticFileHandler, WKDHandler).
+
+src/services/ (Model/Service): Kapselt die Geschäftslogik (GpgService für Shell-Calls, SessionManager für Auth, ChallengeManager für Nonces).
+
+b) Port-Aufteilung
+Gemäß Anforderung haben wir die Dienste getrennt:
+
+Port 80 (Fileserver): Hier läuft die Nutzer-Interaktion (Registrierung /cgi/new, Login, Dateizugriff). Da dies ein privilegierter Port ist, muss der Server mit root-Rechten (sudo) gestartet werden.
+
+Port 8080 (WKD): Hier läuft ausschließlich der Key-Server (/well-known/openpgpkey).
+
+2. Implementierungsschritte
+a) Registrierung & DSGVO
+Wir haben eine statische HTML-Seite (doc/register.html) erstellt, die über den StaticFileHandler auf dem Root-Pfad (/) ausgeliefert wird.
+
+Feature: Das Formular ermöglicht eine "Self-Service"-Registrierung. Nutzer laden ihren Public Key hoch, dieser wird importiert und automatisch vom Server signiert ("Trust on First Use").
+
+DSGVO: Ein Hinweiskasten informiert über Zweckbindung, Datenminimierung und Betroffenenrechte (Auskunft/Löschung).
+
+Sicherheit: Der RegistrationHandler prüft vor dem Anlegen, ob der Benutzername bereits existiert (No-Overwrite), um Account-Takeover zu verhindern.
+
+b) Authentifizierung (Challenge-Response)
+Der FileHandler schützt den Pfad /labornutzer/.
+
+Request: Nutzer fragt Datei an.
+
+Challenge: Server sendet 401 und eine Nonce (Base64).
+
+Response: Nutzer signiert Nonce mit seinem Private Key.
+
+Verifikation: GpgService prüft Signatur gegen den importierten Public Key.
+
+Session: Bei Erfolg stellt der SessionManager ein Cookie (ITS25-SID) aus.
+
+c) Automatisierung (GPG Service)
+Der GpgService wurde massiv erweitert. Er ruft gpg nun als Subprozess auf, um Keys zu importieren und zu signieren.
+
+Herausforderung: Das Signieren erfordert den Private Key der "CA" (des Servers).
+
+3. Aufgetretene Probleme & Lösungen
+Während der Entwicklung stießen wir auf mehrere kritische Probleme, die wie folgt gelöst wurden:
+
+a) Problem: sudo und Keyrings
+Symptom: Der Server lief (Port 80 ok), aber GPG konnte keine Signaturen erstellen (Exit Code 2). Ursache: Der Server läuft als root (wegen Port 80), aber der Private Key der CA lag im Keyring des Users team12. Root hatte keinen Zugriff darauf. Lösung: Export des CA-Schlüssels und Import in den Root-Keyring:
+
+Bash
+
+gpg --export-secret-keys pgp-ca | sudo gpg --import
+b) Problem: ioctl Fehler (Pinentry)
+Symptom: Fehler Inappropriate ioctl for device im Log. Ursache: GPG wollte ein Passwort-Fenster (Pinentry) öffnen, um den Private Key zu nutzen. Da der Server im Hintergrund läuft, gibt es kein Interface dafür. Lösung:
+
+Passwort vom Root-Key entfernt (für Automatisierung).
+
+GPG-Aufruf im Java-Code um --pinentry-mode loopback erweitert, um grafische Prompts zu unterdrücken.
+
+c) Problem: Signieren mit E-Mail-Adresse
+Symptom: gpg --quick-sign-key <email> schlug fehl. Ursache: Der Befehl --quick-sign-key akzeptiert in neueren GPG-Versionen oft nur den Fingerprint als erstes Argument, nicht die UID/Email. Lösung: Implementierung einer Hilfsmethode getFingerprint(email), die erst den Fingerprint via gpg --list-keys ermittelt und diesen dann zum Signieren nutzt.
+
+4. Tests & Validierung
+Wir haben die Funktionalität mit Shell-Skripten verifiziert, da im Labor keine grafische Browser-Umgebung zur Verfügung stand (bzw. kein Plugin für GPG-Auth).
+
+Registrierungstest (register.sh): Erfolgreiches Anlegen von Usern (curl POST). Verifiziert durch Prüfung des Dateisystems.
+
+Login-Test (step1.sh bis step3.sh):
+
+Abruf der Challenge (401).
+
+Lokales Signieren der Challenge.
+
+Senden der Signatur -> Erhalt des Cookies (200 OK).
+
+Zugriff auf geschützte Datei mit Cookie.
+
+5. Server Hoch- & runterfahren
++ 16.01.2026: 22:01
+- Erster start: versuch, einen user einzuloggen
+- Fehlgeschlagen, weil wir versucht haben, die Speicherung des Schlüssels zu automatisieren
+  aber unser private key zum signieren, wird durch ein passwort geschützt.
+
++ 16.01.2026: 22:05
+- zweiter start: weiterer versuch
+- Fehlgeschlagen
+- Lösung: Passwort entfernen
+
++ 16.01.2026: 22:15
+- weiterer versuch
+- Fehlgeschlagen, weil wir versuchht haben, mit der email adresse des nutzers zu signieren
+- Lösung: Fingerprint suchen und damit signieren
+
++ 17.01.2026: 20:10
+- weiterer versuch
+- Erfolgreich
+
++ 27.01.2026: 00:26
+- weiterer versuch, um andere Anforderungen zu prüfen
+- Alle erfolgreich
+
++
+- Dokumentation verfasst
+- Es wird Abgegeben
+
