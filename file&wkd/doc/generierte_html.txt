@@ -1,0 +1,57 @@
+curl http://10.42.2.112/
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrierung - Dateiserver Team 12</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2em auto; padding: 0 1em; }
+        .dsgvo-box { background: #f0f0f0; padding: 15px; border-left: 5px solid #007bff; margin-top: 20px; }
+        textarea { width: 100%; height: 200px; font-family: monospace; font-size: 0.9em; }
+        input[type="text"], input[type="email"] { width: 100%; padding: 8px; margin-bottom: 10px; }
+        label { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Self-Service Registrierung Team 12</h1>
+    <p>Registrieren Sie sich, laden Sie Ihren Public Key hoch und erhalten Sie sofort Zugriff.</p>
+
+    <form action="/cgi/new" method="POST">
+        <label for="user"> Benutzername :</label><br>
+        <input type="text" id="user" name="user" required pattern="[a-zA-Z0-9._-]+" placeholder="z.B. max.mustermann"><br>
+
+        <label for="email">Ihre E-Mail-Adresse (muss im Key enthalten sein):</label><br>
+        <input type="email" id="email" name="email" required placeholder="z.B. max.mustermann@hs-bremerhaven.de"><br>
+
+        <label for="pubkey">Ihr öffentlicher PGP-Schlüssel (ASCII-Armor):</label><br>
+        <textarea id="pubkey" name="pubkey" required placeholder="-----BEGIN PGP PUBLIC KEY BLOCK----- ..."></textarea><br><br>
+        
+        <input type="submit" value="Kostenpflichtig registrieren (Spaß, ist kostenlos)">
+    </form>
+
+    <div class="dsgvo-box">
+    <h3>Datenschutzhinweise & Einwilligung (DSGVO)</h3>
+    <p>Wir verarbeiten Ihre Daten gemäß Art. 6 Abs. 1 lit. a DSGVO (Einwilligung) und lit. b (Vertragserfüllung). Wir halten uns dabei an folgende Grundprinzipien:</p>
+    
+    <ul>
+        <li><strong>Transparenz & Zweckbindung:</strong> Wir speichern Benutzername, E-Mail und Public Key ausschließlich zum Zweck der Bereitstellung Ihres persönlichen Dateispeichers.</li>
+        <li><strong>Datenminimierung:</strong> Wir erheben nur Daten, die technisch notwendig sind (keine Klarnamenpflicht).</li>
+        <li><strong>Speicherbegrenzung:</strong> Ihre Daten werden automatisch zum Ende des Semesters gelöscht.</li>
+        <li><strong>Integrität & Vertraulichkeit:</strong> Der Zugriff auf Ihre Datei ist durch Ihren privaten GPG-Schlüssel geschützt.</li>
+    </ul>
+
+    <h4>Ihre Rechte & Geltendmachung:</h4>
+    <p>Sie haben folgende Rechte bezüglich Ihrer Daten:</p>
+    <ul>
+        <li><strong>Auskunft (Art. 15):</strong> Loggen Sie sich ein, um Ihren gespeicherten Status und Ihre Daten einzusehen ("Privacy Mirror").</li>
+        <li><strong>Löschung (Art. 17) & Widerruf:</strong> Sie können Ihren Account jederzeit löschen lassen. Senden Sie dazu eine signierte E-Mail an den Administrator (Team 12) oder nutzen Sie die Lösch-Funktion (sofern implementiert).</li>
+    </ul>
+
+    <p style="font-size: 0.9em; margin-top: 10px;">
+        <em>Mit Klick auf "Registrieren" stimmen Sie der Verarbeitung Ihrer IP-Adresse (Sicherheitsprotokolle) und der Veröffentlichung Ihres Public Keys auf diesem Server zu.</em>
+    </p>
+</div>
+</body>
+</html>
+

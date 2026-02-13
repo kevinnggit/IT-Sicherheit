@@ -1,0 +1,43 @@
+tcpdump-Auszug:
+
+17:37:18.760716 IP 10.42.2.135 > 10.42.2.112: ICMP echo request, id 640, seq 1, length 64
+17:37:18.760745 IP 10.42.2.112 > 10.42.2.135: ICMP echo reply, id 640, seq 1, length 64
+17:37:18.767689 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 10164, win 65, options [nop,nop,TS val 2321222217 ecr 2804320465], length 0
+17:37:18.769337 IP 10.42.2.135.60896 > 10.42.2.112.31337: UDP, length 16
+17:37:18.769363 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+17:37:23.822416 ARP, Request who-has 10.42.2.135 tell 10.42.2.112, length 28
+17:37:23.822637 ARP, Reply 10.42.2.135 is-at 52:54:00:b6:82:c8, length 28
+17:37:24.431137 IP 10.42.2.131 > 10.42.2.112: ICMP echo request, id 17938, seq 1, length 64
+17:37:24.431168 IP 10.42.2.112 > 10.42.2.131: ICMP echo reply, id 17938, seq 1, length 64
+17:37:24.439569 IP 10.42.2.131.58206 > 10.42.2.112.31337: UDP, length 16
+17:37:42.966133 IP 10.42.2.135 > 10.42.2.112: ICMP echo request, id 1798, seq 1, length 64
+17:37:42.966159 IP 10.42.2.112 > 10.42.2.135: ICMP echo reply, id 1798, seq 1, length 64
+17:37:42.974368 IP 10.42.2.135.53495 > 10.42.2.112.31337: UDP, length 16
+17:37:42.974395 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+17:37:47.845879 IP 10.42.2.131 > 10.42.2.112: ICMP echo request, id 19016, seq 1, length 64
+17:37:47.845905 IP 10.42.2.112 > 10.42.2.131: ICMP echo reply, id 19016, seq 1, length 64
+17:37:47.850686 IP 10.125.2.22.38392 > 10.42.2.112.22: Flags [.], ack 125040, win 65, options [nop,nop,TS val 2321251297 ecr 2804349585], length 0
+17:37:47.855090 IP 10.42.2.131.45085 > 10.42.2.112.31337: UDP, length 16
+17:37:59.567565 IP 10.42.2.135 > 10.42.2.112: ICMP echo request, id 2913, seq 1, length 64
+17:37:59.567591 IP 10.42.2.112 > 10.42.2.135: ICMP echo reply, id 2913, seq 1, length 64
+17:37:59.575800 IP 10.42.2.135.54146 > 10.42.2.112.31337: UDP, length 16
+17:37:59.575826 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+
+Beobachtungen:
+
+Ungewöhnlicher Port --> Der zielport für UDP Pakete ist immer 31337
+Protokoll -->  Es handelt sich nur um UDP-pakete mit länge 16 Bytes
+Quelle    -->  Der Angriff kommt von Internen IP-Adressen aus dem Labornetz (10.42.2.135 und .131)
+Reaktion  -->  Unser Host antwortet meistens mit ICMP port unreachable bei empfang von UDP-Paketen
+               17:37:59.575826 IP 10.42.2.112 > 10.42.2.135: ICMP 10.42.2.112 udp port 31337 unreachable, length 52
+Rhythmus  --> Pakete treffen unregelmäßig ein aber scheinen irgendwie eine Automatisierung zu sein, da sie mal nach 1 mal nach 6 und 
+              mal nach 18 sekunden kommen.
+
+
+Notiz:
+
+Das System wird von internen Hosts auf dem Port 31337 angepingt. Da auf unserem Host der Port geschlossen ist (ICMP Unreachable Antworten),
+kommt keine Verbindung zustande. Es handelt sich vermutlich um einen Scan oder den Versuch einer Malware/eines Spiel-Clients, einen Server
+zu finden ("Service Discovery"). Um das "Rauschen" (die ICMP-Fehlermeldungen) zu stoppen und potenzielle Sicherheitsrisiken zu minimieren,
+sollte dieser Port durch eine Firewall blockiert werden, damit der Server nicht mehr antwortet.
+

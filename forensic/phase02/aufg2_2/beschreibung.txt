@@ -1,0 +1,33 @@
+Erst habe wir versucht, das Netz 10.42.10.10 mit netcat zu scannen indem wir eine
+Schleife gebaut haben (das skript lautet: scan.sh). Später haben wir nmap installiert und damit gescannt
+(nmap -sn 10.42.10.0 -oN discovery_sn.txt). Dadurch habe wir IPs 10.42.10.101 entdeckt und 10.42.10.10,
+den wir vohin schon gesehen hatten. 
+Danach wurden alle Ports mit den IPs gescant, um zu finden, wo die spiele laufen
+(nmap -p- -sV 10.42.10.10 -oN scans_10.42.10.10.txt und nmap -p- -sV 10.42.10.101 -oN scans_10.42.10.101.txt).
+Nur auf bei IP .10 war Port 7902 (tcp) offen und bei beiden ist Port 22 (SSH) offen.
+Wir gehen davon aus, dass das zweite spiel über ssh läuft.
+Wir haben dann versucht, uns mit netcat beim spiel zu verbinden, haben keine Antwort bekommen,
+die beweist, dass es funktioniert hat. Deswegen haben wir tcpdump im hintegrund gestatet
+und uns dann wieder verbunden und konnten sehen, dass der Server geantwortet hat.
+
+
+
+
+
+Vorgehen Aufgabe 2.2
+
+1. Discovery Scan:
+   Zunächst wurde mit "nmap -sn" das neue Subnetz 10.42.10.0/24 sowie das Labornetz gescannt.
+   Ergebnis: Neben der bekannten IP 10.42.10.10 wurde ein neuer Host 10.42.10.101 entdeckt.
+
+2. Port-Analyse 10.42.10.10 (Dopewars):
+   Ein Standard-Scan zeigte nur SSH. Ein Full-Scan (-p-) enthüllte Port 7902/tcp.
+   Ein Verbindungstest mit Netcat bestätigte, dass der Port offen ist. Dies ist der Dopewars-Server.
+
+3. Port-Analyse 10.42.10.101 (Nethack):
+   Ein TCP-Full-Scan zeigte nur Port 22 (SSH). Ein UDP-Scan der Top-100 Ports zeigte keine offenen Ports.
+   Daraus folgt, dass dieser Host das Spiel Nethack über eine SSH-Sitzung bereitstellt (Nethack Public Server).
+
+Zusammenfassung:
+- Dopewars: 10.42.10.10 auf Port 7902
+- Nethack: 10.42.10.101 via SSH (Port 22)

@@ -1,0 +1,10 @@
+# Nmap 7.93 scan initiated Sun Dec 28 12:06:11 2025 as: nmap -sn -oN discovery_sn1.txt 10.42.10.0/24
+Nmap scan report for 10.42.10.10
+Host is up (0.00099s latency).
+MAC Address: 52:54:00:E4:CD:D4 (QEMU virtual NIC)
+Nmap scan report for 10.42.10.101
+Host is up (0.00050s latency).
+MAC Address: 52:54:00:57:01:65 (QEMU virtual NIC)
+Nmap scan report for 10.42.10.12
+Host is up.
+# Nmap done at Sun Dec 28 12:06:13 2025 -- 256 IP addresses (3 hosts up) scanned in 1.95 seconds
